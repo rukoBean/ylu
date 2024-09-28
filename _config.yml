@@ -1,4 +1,5 @@
 title: ylu-weekly
 theme: no-style-please
+favicon: "favicon.ico"
 plugins:
   - jekyll-feed
