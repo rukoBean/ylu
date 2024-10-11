@@ -3,26 +3,28 @@
 
 @import "no-style-please";
 .tab {
-    overflow: hidden;
-    border: 1px solid #ccc;
-    background-color: #f1f1f1;
-  }
-  .tab button {
-    background-color: inherit;
-    float: left;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    padding: 14px 16px;
-    transition: 0.3s;
-  }
-  .tab button.active {
-    background-color: #ccc;
-  }
-  .tabcontent {
-    display: none;
-    padding: 6px 12px;
-    border: 1px solid #ccc;
-    border-top: none;
-  }
-  
+  display: flex;
+}
+.tab button {
+  background-color: inherit;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  flex: 1;
+  text-align: center;
+  border-bottom: 6px solid #ccc;
+  font-family: monospace;
+}
+.tab button.active {
+  border-bottom: 6px solid #000000; 
+}
+.tab button:hover {
+  background-color: #f1f1f1;
+}
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border-top: none;
+}
