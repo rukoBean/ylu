@@ -1,6 +1,5 @@
 title: ylu-weekly
 theme: no-style-please
-url: https://www.ylu-weekly.live/
 favicon: "favicon.ico"
 plugins:
   - jekyll-feed
