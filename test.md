@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: page
 title: Page Tests
 custom_js: 
   - tabs
