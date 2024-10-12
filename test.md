@@ -1,8 +1,13 @@
 ---
 layout: post
-title: test
-custom_js: tabs
+title: Page Tests
+custom_js: 
+  - tabs
+  - accordions
+category: example
 ---
+
+# 1. Tabs
 
 <div class="tab">
   <button class="tablinks" onclick="tabs(event, 'INCAR')" id="defaultOpen">INCAR</button>
@@ -57,10 +62,53 @@ PAW_PBE Fe 06Sep2000
   </pre>
 </div>
 
-This is some test words.
 
-```
-DOes the code BLOck still working?
-markdown, hello?
-```
+# 2. Accordion
 
+
+<div class="accordion">
+	<div class="accordion-item">
+		<div class="accordion-item-header">INCAR</div>
+		<div class="accordion-item-body">
+			 <pre>
+SYSTEM = Fe
+ISTART = 0
+ICHARG = 2
+ENCUT = 350
+ISMEAR = 1; SIGMA = 0.2
+ISPIN = 2; MAGMOM = 4
+# save room
+LREAL=.FALSE.
+LWAVE=.FALSE.
+LCHARG=.FALSE.
+  </pre>
+		</div>
+	</div>
+	<div class="accordion-item">
+		<div class="accordion-item-header">POSCAR</div>
+		<div class="accordion-item-body">
+			  <pre>
+Fe BCC
+2.86
+-0.5 0.5 0.5 
+0.5 -0.5 0.5
+0.5 0.5 -0.5
+1
+C
+0 0 0
+  </pre>
+		</div>
+	</div>
+	<div class="accordion-item">
+		<div class="accordion-item-header">KPOINTS</div>
+		<div class="accordion-item-body">
+			<pre>
+Auto
+0
+G
+9 9 9
+0 0 0
+  </pre>
+		</div>
+	</div>
+</div>
