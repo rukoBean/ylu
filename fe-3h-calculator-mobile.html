@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>火纹风花雪月温室计算器</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            padding: 10px; /* Add some padding for better spacing on all screens */
+        }
+
+        /* General styling for forms and selects */
+        form {
+            margin-bottom: 10px;
+        }
+
+        select {
+            /*width: 60%;  Make selects take full width on smaller screens */
+            padding: 8px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        }
+
+        button {
+            font-size: 1.2em; /* Slightly larger button for easier tapping */
+            padding: 10px 20px;
+            margin-top: 15px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            /*width: 40%;  Full width button on mobile */
+        }
+
+        .underline-para {
+            text-decoration: underline;
+            display: block; /* Change to block for better readability on mobile */
+            margin-top: 5px; /* Add some space below the label */
+        }
+
+        .inline-para {
+            display: inline-block; /* Change to block for better readability on mobile */
+            font-weight: bold; /* Make labels stand out */
+        }
+
+        .red-highlight {
+            color: red;
+            font-size: 0.9em; /* Slightly adjust font size */
+            display: block;
+            margin-top: 10px;
+        }
+
+        /* Adjust font sizes for smaller screens */
+        @media (max-width: 600px) {
+            body {
+                font-size: 14px;
+            }
+
+            select, button {
+                font-size: 1em;
+            }
+
+            .red-highlight {
+                font-size: 0.8em;
+            }
+        }
+
+        /* Adjust font sizes for even smaller screens */
+        @media (max-width: 400px) {
+            body {
+                font-size: 12px;
+            }
+
+            select, button {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        const seeds = [{
+            numtag: 1, fullname: "草本植物种子",
+            rank: 27, rare: 1,
+            statup: "力量", statitem: "岩石牛蒡",
+            "lv1": ["杂草", "杂草", "洋葱", "草本植物种子", "草本植物种子"],
+            "lv2": ["草本植物种子", "草本植物种子", "芜菁", "卷心菜", "桃醋栗"],
+            "lv3": ["草本植物种子", "阿鲁比聂莓", "芜菁", "芜菁", "果树种子"],
+            "lv4": ["草本植物种子", "桃醋栗", "芜菁", "黄色花朵种子", "果树种子"],
+            "lv5": ["草本植物种子", "胡萝卜", "芙朵拉北方种子", "鹰嘴豆", "卷心菜"],
+            "lv6": ["芙朵拉西方种子", "番茄", "芙朵拉北方种子", "水仙", "鹰嘴豆"]
+        }, {
+            numtag: 2, fullname: "根茎植物种子",
+            rank: 49, rare: 1,
+            statup: "物防", statitem: "仙馔秘药",
+            "lv1": ["杂草", "杂草", "鹰嘴豆", "根茎植物种子", "根茎植物种子"],
+            "lv2": ["根茎植物种子", "阿鲁比聂莓", "番茄", "卷心菜", "卷心菜"],
+            "lv3": ["根茎植物种子", "胡萝卜", "卷心菜", "桃醋栗", "芙朵拉北方种子"],
+            "lv4": ["根茎植物种子", "诺亚果", "卷心菜", "水蓝色花朵种子", "芙朵拉北方种子"],
+            "lv5": ["根茎植物种子", "番茄", "摩尔菲斯种子", "紫色花朵种子", "鹰嘴豆"],
+            "lv6": ["蓝色花朵种子", "桃醋栗", "摩尔菲斯种子", "紫罗兰", "芜菁"]
+        }, {
+            numtag: 3, fullname: "蔬菜种子",
+            rank: 33, rare: 1,
+            statup: "魔防", statitem: "白维罗娜",
+            "lv1": ["枯萎蔬菜", "枯萎蔬菜", "鹰嘴豆", "蔬菜种子", "蔬菜种子"],
+            "lv2": ["枯萎蔬菜", "鹰嘴豆", "洋葱", "桃醋栗", "芜菁"], "lv3": ["蔬菜种子", "洋葱", "番茄", "芜菁", "草本植物种子"],
+            "lv4": ["蔬菜种子", "桃醋栗", "洋葱", "紫色花朵种子", "诺亚果"],
+            "lv5": ["根茎植物种子", "番茄", "摩尔菲斯种子", "紫色花朵种子", "鹰嘴豆"],
+            "lv6": ["蓝色花朵种子", "桃醋栗", "摩尔菲斯种子", "紫罗兰", "芜菁"]
+        }, {
+            numtag: 4, fullname: "果树种子",
+            rank: 44, rare: 1,
+            statup: "幸运", statitem: "奇迹豆",
+            "lv1": ["扎纳德果", "扎纳德果", "桃醋栗", "果树种子", "果树种子"],
+            "lv2": ["果树种子", "芙朵拉北方种子", "芙朵拉北方种子", "桃醋栗", "根茎植物种子"],
+            "lv3": ["果树种子", "芙朵拉北方种子", "桃醋栗", "阿鲁比聂莓", "根茎植物种子"],
+            "lv4": ["果树种子", "芙朵拉北方种子", "桃醋栗", "白色花朵种子", "摩尔菲斯蜜李"],
+            "lv5": ["果树种子", "芙朵拉北方种子", "芙朵拉东方种子", "绿色花朵种子", "洋葱"],
+            "lv6": ["芙朵拉北方种子", "诺亚果", "芙朵拉东方种子", "铃兰", "卷心菜"]
+
+        }, {
+            numtag: 5, fullname: "阿鲁比聂产种子",
+            rank: 20, rare: 2,
+            statup: "魅力", statitem: "黄金苹果",
+            "lv1": ["扎纳德果", "扎纳德果", "桃醋栗", "阿鲁比聂种子", "阿鲁比聂种子"],
+            "lv2": ["阿鲁比聂种子", "鹰嘴豆", "桃醋栗", "阿鲁比聂莓", "果树种子"],
+            "lv3": ["阿鲁比聂种子", "阿鲁比聂种子", "桃醋栗", "阿鲁比聂莓", "根茎植物种子"],
+            "lv4": ["阿鲁比聂种子", "胡萝卜", "桃醋栗", "黄色花朵种子", "根茎植物种子"],
+            "lv5": ["阿鲁比聂种子", "胡萝卜", "番茄", "白色花朵种子", "芜菁"],
+            "lv6": ["阿鲁比聂莓", "鹰嘴豆", "番茄", "紫罗兰", "胡萝卜"]
+        }, {
+            numtag: 6, fullname: "摩尔菲斯产种子",
+            rank: 23, rare: 2,
+            statup: "技巧", statitem: "炼狱石榴",
+            "lv1": ["杂草", "杂草", "芜菁", "摩尔菲斯种子", "芜菁"],
+            "lv2": ["摩尔菲斯种子", "摩尔菲斯种子", "胡萝卜", "芜菁", "果树种子"],
+            "lv3": ["摩尔菲斯种子", "摩尔菲斯种子", "桃醋栗", "鹰嘴豆", "蔬菜种子"],
+            "lv4": ["摩尔菲斯种子", "胡萝卜", "芜菁", "白色花朵种子", "蔬菜种子"],
+            "lv5": ["摩尔菲斯种子", "阿鲁比聂莓", "番茄", "绿色花朵种子", "桃醋栗"],
+            "lv6": ["马格德雷多樱桃", "胡萝卜", "番茄", "银莲花", "洋葱"]
+        }, {
+            numtag: 7, fullname: "芙朵拉东方产种子",
+            rank: 42, rare: 2,
+            statup: "物防", statitem: "仙馔秘药",
+            "lv1": ["杂草", "杂草", "番茄", "芙朵拉东方种子", "芙朵拉东方种子"],
+            "lv2": ["芙朵拉东方种子", "维罗娜", "洋葱", "桃醋栗", "洋葱"],
+            "lv3": ["芙朵拉东方种子", "芙朵拉东方种子", "洋葱", "洋葱", "摩尔菲斯种子"],
+            "lv4": ["芙朵拉东方种子", "桃醋栗", "洋葱", "绿色花朵种子", "摩尔菲斯种子"],
+            "lv5": ["芙朵拉东方种子", "番茄", "萨拉德寒冰菜种子", "蓝色花朵种子", "卷心菜"],
+            "lv6": ["阿鲁比聂莓", "维罗娜", "萨拉德寒冰菜", "莱佛士猪笼草", "鹰嘴豆"]
+        }, {
+            numtag: 8, fullname: "芙朵拉南方产种子",
+            rank: 37, rare: 2,
+            statup: "Mag", statitem: "上等魔草",
+            "lv1": ["杂草", "杂草", "胡萝卜", "芙朵拉南方种子", "芙朵拉南方种子"],
+            "lv2": ["芙朵拉南方种子", "芜菁", "桃醋栗", "卷心菜", "芙朵拉西方种子"],
+            "lv3": ["芙朵拉南方种子", "芜菁", "卷心菜", "桃醋栗", "芙朵拉北方种子"],
+            "lv4": ["芙朵拉南方种子", "芜菁", "维罗娜", "红色花朵种子", "马格德雷多樱桃"],
+            "lv5": ["芙朵拉南方种子", "芜菁", "摩尔菲斯蜜李", "黄色花朵种子", "马格德雷多樱桃"],
+            "lv6": ["维罗娜", "桃醋栗", "摩尔菲斯蜜李", "满天星", "鹰嘴豆"]
+        }, {
+            numtag: 9, fullname: "芙朵拉西方产种子",
+            rank: 9, rare: 2,
+            statup: "HP", statitem: "生命果实",
+            "lv1": ["扎纳德果", "扎纳德果", "胡萝卜", "芙朵拉西方种子", "芙朵拉西方种子"],
+            "lv2": ["芙朵拉西方种子", "诺亚果", "鹰嘴豆", "卷心菜", "根茎植物种子"],
+            "lv3": ["芙朵拉西方种子", "诺亚果", "诺亚果", "桃醋栗", "蔬菜种子"],
+            "lv4": ["芙朵拉西方种子", "诺亚果", "番茄", "绿色花朵种子", "阿鲁比聂莓"],
+            "lv5": ["芙朵拉西方种子", "诺亚果", "芙朵拉南方种子", "蓝色花朵种子", "胡萝卜"],
+            "lv6": ["根茎植物种子", "诺亚果", "芙朵拉南方种子", "向日葵", "洋葱"]
+        }, {
+            numtag: 10, fullname: "芙朵拉北方产种子",
+            rank: 53, rare: 2,
+            statup: "魅力", statitem: "黄金苹果",
+            "lv1": ["枯萎蔬菜", "枯萎蔬菜", "洋葱", "芙朵拉北方种子", "芙朵拉北方种子"],
+            "lv2": ["芙朵拉北方种子", "番茄", "鹰嘴豆", "果树种子", "果树种子"],
+            "lv3": ["芙朵拉北方种子", "胡萝卜", "诺亚果", "果树种子", "根茎植物种子"],
+            "lv4": ["芙朵拉北方种子", "桃醋栗", "诺亚果", "黄色花朵种子", "阿鲁比聂莓"],
+            "lv5": ["芙朵拉北方种子", "摩尔菲斯蜜李", "摩尔菲斯种子", "白色花朵种子", "鹰嘴豆"],
+            "lv6": ["芙朵拉南方种子", "鹰嘴豆", "摩尔菲斯种子", "玫瑰", "芜菁"]
+        }, {
+            numtag: 11, fullname: "白色花朵种子",
+            rank: 5, rare: 3,
+            statup: "魅力", statitem: "黄金苹果",
+            "lv1": ["杂草", "杂草", "杂草", "满天星", "白色花朵种子"],
+            "lv2": ["杂草", "白色花朵种子", "绿色花朵种子", "水仙", "满天星"],
+            "lv3": ["水仙", "满天星", "百合", "铃兰", "蓝色花朵种子"],
+            "lv4": ["向日葵", "银莲花", "绿色花朵种子", "黄色花朵种子", "紫色花朵种子"],
+            "lv5": ["向日葵", "芙朵拉南方种子", "紫色花朵种子", "芜菁", "水仙"],
+            "lv6": ["水仙", "蔬菜种子", "芙朵拉西方种子", "摩尔菲斯蜜李种子", "蛇果"]
+        }, {
+            numtag: 12, fullname: "红色花朵种子",
+            rank: 24, rare: 3,
+            statup: "魔防", statitem: "白维罗娜",
+            "lv1": ["杂草", "杂草", "杂草", "康乃馨", "红色花朵种子"],
+            "lv2": ["杂草", "红色花朵种子", "黄色花朵种子", "玫瑰", "康乃馨"],
+            "lv3": ["玫瑰", "玫瑰", "康乃馨", "百合", "白色花朵种子"],
+            "lv4": ["水仙", "薰衣草", "黄色花朵种子", "紫色花朵种子", "蓝色花朵种子"],
+            "lv5": ["水仙", "洋葱", "蓝色花朵种子", "阿鲁比聂种子", "玫瑰"],
+            "lv6": ["玫瑰", "草本植物种子", "阿鲁比聂种子", "萨拉德寒冰菜", "马格德雷多樱桃"]
+        }, {
+            numtag: 13, fullname: "黄色花朵种子",
+            rank: 55, rare: 3,
+            statup: "Mag", statitem: "上等魔草",
+            "lv1": ["杂草", "杂草", "杂草", "向日葵", "黄色花朵种子"],
+            "lv2": ["杂草", "黄色花朵种子", "白色花朵种子", "向日葵", "向日葵"],
+            "lv3": ["向日葵", "银莲花", "水仙", "百合", "绿色花朵种子"],
+            "lv4": ["康乃馨", "玫瑰", "白色花朵种子", "红色花朵种子", "水蓝色花朵种子"],
+            "lv5": ["康乃馨", "摩尔菲斯种子", "水蓝色花朵种子", "洋葱", "向日葵"],
+            "lv6": ["向日葵", "芙朵拉北方种子", "芙朵拉南方种子", "蛇果种子", "果树种子"]
+        }, {
+            numtag: 14, fullname: "蓝色花朵种子",
+            rank: 38, rare: 3,
+            statup: "HP", statitem: "生命果实",
+            "lv1": ["杂草", "杂草", "杂草", "勿忘草", "蓝色花朵种子"],
+            "lv2": ["杂草", "蓝色花朵种子", "水蓝色花朵种子", "银莲花", "勿忘草"],
+            "lv3": ["勿忘草", "勿忘草", "银莲花", "玫瑰", "紫色花朵种子"],
+            "lv4": ["紫罗兰", "铃兰", "水蓝色花朵种子", "绿色花朵种子", "黄色花朵种子"],
+            "lv5": ["紫罗兰", "鹰嘴豆", "黄色花朵种子", "芙朵拉东方种子", "勿忘草"],
+            "lv6": ["勿忘草", "根茎植物种子", "芙朵拉东方种子", "摩尔菲斯蜜李种子", "萨拉德寒冰菜"]
+        }, {
+            numtag: 15, fullname: "绿色花朵种子",
+            rank: 10, rare: 3,
+            statup: "技巧", statitem: "炼狱石榴",
+            "lv1": ["杂草", "杂草", "杂草", "莱佛士猪笼草", "绿色花朵种子"],
+            "lv2": ["杂草", "绿色花朵种子", "蓝色花朵种子", "莱佛士猪笼草", "莱佛士猪笼草"],
+            "lv3": ["莱佛士猪笼草", "莱佛士猪笼草", "玫瑰", "玫瑰", "水蓝色花朵种子"],
+            "lv4": ["百合", "紫罗兰", "蓝色花朵种子", "白色花朵种子", "红色花朵种子"],
+            "lv5": ["百合", "扎纳德果", "红色花朵种子", "卷心菜", "莱佛士猪笼草"],
+            "lv6": ["莱佛士猪笼草", "根茎植物种子", "芙朵拉东方种子", "番茄", "摩尔菲斯蜜李"]
+        }, {
+            numtag: 16, fullname: "紫色花朵种子",
+            rank: 16, rare: 3,
+            statup: "力量", statitem: "岩石牛蒡",
+            "lv1": ["杂草", "杂草", "杂草", "薰衣草", "紫色花朵种子"],
+            "lv2": ["杂草", "紫色花朵种子", "红色花朵种子", "紫罗兰", "薰衣草"],
+            "lv3": ["紫罗兰", "玫瑰", "薰衣草", "勿忘草", "黄色花朵种子"],
+            "lv4": ["莱佛士猪笼草", "满天星", "红色花朵种子", "水蓝色花朵种子", "绿色花朵种子"],
+            "lv5": ["莱佛士猪笼草", "卷心菜", "绿色花朵种子", "草本植物种子", "紫罗兰"],
+            "lv6": ["薰衣草", "芙朵拉西方种子", "摩尔菲斯种子", "芙朵拉东方种子", "阿鲁比聂莓"]
+        }, {
+            numtag: 17, fullname: "水蓝色花朵种子",
+            rank: 1, rare: 3,
+            statup: "速度", statitem: "快腿胡萝卜",
+            "lv1": ["杂草", "杂草", "杂草", "康乃馨", "水蓝色花朵种子"],
+            "lv2": ["杂草", "水蓝色花朵种子", "紫色花朵种子", "康乃馨", "康乃馨"],
+            "lv3": ["银莲花", "银莲花", "勿忘草", "玫瑰", "红色花朵种子"],
+            "lv4": ["铃兰", "莱佛士猪笼草", "紫色花朵种子", "蓝色花朵种子", "白色花朵种子"],
+            "lv5": ["铃兰", "芙朵拉北方种子", "白色花朵种子", "芜菁", "银莲花"],
+            "lv6": ["勿忘草", "果树种子", "芙朵拉北方种子", "番茄", "维罗娜"]
+        }, {
+            numtag: 18, fullname: "萨拉德寒冰菜种子",
+            rank: 3, rare: 4,
+            statup: "速度", statitem: "快腿胡萝卜",
+            "lv1": ["枯萎蔬菜", "维罗娜", "胡萝卜", "萨拉德寒冰菜种子", "萨拉德寒冰菜种子"],
+            "lv2": ["枯萎蔬菜", "萨拉德寒冰菜种子", "鹰嘴豆", "萨拉德寒冰菜", "萨拉德寒冰菜"],
+            "lv3": ["萨拉德寒冰菜种子", "胡萝卜", "萨拉德寒冰菜", "萨拉德寒冰菜", "萨拉德寒冰菜"],
+            "lv4": ["萨拉德寒冰菜种子", "萨拉德寒冰菜", "马格德雷多樱桃", "维罗娜", "阿鲁比聂莓"],
+            "lv5": ["萨拉德寒冰菜", "萨拉德寒冰菜", "白芷种子", "水蓝色花朵种子", "马格德雷多樱桃"],
+            "lv6": ["炼狱草", "白芷", "白芷种子", "水仙", "芜菁"]
+        }, {
+            numtag: 19, fullname: "摩尔菲斯蜜李种子",
+            rank: 18, rare: 4,
+            statup: "技巧", statitem: "炼狱石榴",
+            "lv1": ["扎纳德果", "扎纳德果", "桃醋栗", "诺亚果", "摩尔菲斯蜜李种子"],
+            "lv2": ["扎纳德果", "摩尔菲斯蜜李种子", "摩尔菲斯蜜李", "摩尔菲斯蜜李", "桃醋栗"],
+            "lv3": ["摩尔菲斯蜜李种子", "桃醋栗", "诺亚果", "摩尔菲斯蜜李", "摩尔菲斯蜜李"],
+            "lv4": ["摩尔菲斯蜜李种子", "番茄", "摩尔菲斯蜜李", "摩尔菲斯蜜李", "阿鲁比聂种子"],
+            "lv5": ["摩尔菲斯蜜李", "摩尔菲斯蜜李", "芙朵拉东方种子", "紫色花朵种子", "芜菁"],
+            "lv6": ["萨拉德寒冰菜种子", "马格德雷多樱桃", "芙朵拉东方种子", "勿忘草", "扎纳德宝果"]
+        }, {
+            numtag: 20, fullname: "蛇果种子",
+            rank: 31, rare: 5,
+            statup: "幸运", statitem: "奇迹豆",
+            "lv1": ["杂草", "杂草", "桃醋栗", "蛇果种子", "蛇果种子"],
+            "lv2": ["杂草", "蛇果种子", "蛇果", "蛇果", "蛇果"],
+            "lv3": ["蛇果种子", "桃醋栗", "蛇果", "蛇果", "蛇果"],
+            "lv4": ["蛇果种子", "蛇果", "蛇果", "蛇果", "白芷种子"],
+            "lv5": ["蛇果", "蛇果", "扎纳德宝果", "红色花朵种子", "洋葱"],
+            "lv6": ["白芷种子", "扎纳德宝果", "草本植物种子", "向日葵", "卷心菜"]
+        }, {
+            numtag: 21, fullname: "白芷种子",
+            rank: 34, rare: 5,
+            statup: "力量", statitem: "岩石牛蒡",
+            "lv1": ["杂草", "杂草", "番茄", "白芷种子", "白芷种子"],
+            "lv2": ["杂草", "白芷种子", "白芷", "萨拉德寒冰菜", "白芷"],
+            "lv3": ["白芷种子", "白芷", "马格德雷多樱桃", "白芷", "白芷"],
+            "lv4": ["白芷种子", "白芷", "白芷", "白芷", "摩尔菲斯蜜李种子"],
+            "lv5": ["白芷", "白芷", "炼狱草", "黄色花朵种子", "鹰嘴豆"],
+            "lv6": ["蛇果种子", "炼狱草", "芙朵拉西方种子", "百合", "芜菁"]
+        }, {
+            numtag: 22, fullname: "无",
+            rank: 0, rare: 0,
+            statup: "", statitem: "",
+            "lv1": [],
+            "lv2": [],
+            "lv3": [],
+            "lv4": [],
+            "lv5": [],
+            "lv6": []
+
+        }];
+    </script>
+
+    <form>
+        选择第1个种子:
+        <select id="input-one" class="choice">
+            <option value="1">草本植物种子</option>
+            <option value="2">根茎植物种子</option>
+            <option value="3">蔬菜种子</option>
+            <option value="4">果树种子</option>
+            <option value="5">阿鲁比聂产种子</option>
+            <option value="6">摩尔菲斯产种子</option>
+            <option value="7">芙朵拉东方产种子</option>
+            <option value="8">芙朵拉南方产种子</option>
+            <option value="9">芙朵拉西方产种子</option>
+            <option value="10">芙朵拉北方产种子</option>
+            <option value="11">白色花朵种子</option>
+            <option value="12">红色花朵种子</option>
+            <option value="13">黄色花朵种子</option>
+            <option value="14">蓝色花朵种子</option>
+            <option value="15">绿色花朵种子</option>
+            <option value="16">紫色花朵种子</option>
+            <option value="17">水蓝色花朵种子</option>
+            <option value="18">萨拉德寒冰菜种子</option>
+            <option value="19">摩尔菲斯蜜李种子</option>
+            <option value="20">蛇果种子</option>
+            <option value="21">白芷种子</option>
+            <option value="22">无</option>
+        </select>
+    </form>
+
+    <form>
+        选择第2个种子:
+        <select id="input-two" class="choice">
+            <option value="1">草本植物种子</option>
+            <option value="2">根茎植物种子</option>
+            <option value="3">蔬菜种子</option>
+            <option value="4">果树种子</option>
+            <option value="5">阿鲁比聂产种子</option>
+            <option value="6">摩尔菲斯产种子</option>
+            <option value="7">芙朵拉东方产种子</option>
+            <option value="8">芙朵拉南方产种子</option>
+            <option value="9">芙朵拉西方产种子</option>
+            <option value="10">芙朵拉北方产种子</option>
+            <option value="11">白色花朵种子</option>
+            <option value="12">红色花朵种子</option>
+            <option value="13">黄色花朵种子</option>
+            <option value="14">蓝色花朵种子</option>
+            <option value="15">绿色花朵种子</option>
+            <option value="16">紫色花朵种子</option>
+            <option value="17">水蓝色花朵种子</option>
+            <option value="18">萨拉德寒冰菜种子</option>
+            <option value="19">摩尔菲斯蜜李种子</option>
+            <option value="20">蛇果种子</option>
+            <option value="21">白芷种子</option>
+            <option value="22">无</option>
+        </select>
+    </form>
+
+    <form>
+        选择第3个种子:
+        <select id="input-three" class="choice">
+            <option value="1">草本植物种子</option>
+            <option value="2">根茎植物种子</option>
+            <option value="3">蔬菜种子</option>
+            <option value="4">果树种子</option>
+            <option value="5">阿鲁比聂产种子</option>
+            <option value="6">摩尔菲斯产种子</option>
+            <option value="7">芙朵拉东方产种子</option>
+            <option value="8">芙朵拉南方产种子</option>
+            <option value="9">芙朵拉西方产种子</option>
+            <option value="10">芙朵拉北方产种子</option>
+            <option value="11">白色花朵种子</option>
+            <option value="12">红色花朵种子</option>
+            <option value="13">黄色花朵种子</option>
+            <option value="14">蓝色花朵种子</option>
+            <option value="15">绿色花朵种子</option>
+            <option value="16">紫色花朵种子</option>
+            <option value="17">水蓝色花朵种子</option>
+            <option value="18">萨拉德寒冰菜种子</option>
+            <option value="19">摩尔菲斯蜜李种子</option>
+            <option value="20">蛇果种子</option>
+            <option value="21">白芷种子</option>
+            <option value="22">无</option>
+        </select>
+    </form>
+
+    <form>
+        选择第4个种子:
+        <select id="input-four" class="choice">
+            <option value="1">草本植物种子</option>
+            <option value="2">根茎植物种子</option>
+            <option value="3">蔬菜种子</option>
+            <option value="4">果树种子</option>
+            <option value="5">阿鲁比聂产种子</option>
+            <option value="6">摩尔菲斯产种子</option>
+            <option value="7">芙朵拉东方产种子</option>
+            <option value="8">芙朵拉南方产种子</option>
+            <option value="9">芙朵拉西方产种子</option>
+            <option value="10">芙朵拉北方产种子</option>
+            <option value="11">白色花朵种子</option>
+            <option value="12">红色花朵种子</option>
+            <option value="13">黄色花朵种子</option>
+            <option value="14">蓝色花朵种子</option>
+            <option value="15">绿色花朵种子</option>
+            <option value="16">紫色花朵种子</option>
+            <option value="17">水蓝色花朵种子</option>
+            <option value="18">萨拉德寒冰菜种子</option>
+            <option value="19">摩尔菲斯蜜李种子</option>
+            <option value="20">蛇果种子</option>
+            <option value="21">白芷种子</option>
+            <option value="22">无</option>
+        </select>
+    </form>
+
+    <form>
+        选择第5个种子:
+        <select id="input-five" class="choice">
+            <option value="1">草本植物种子</option>
+            <option value="2">根茎植物种子</option>
+            <option value="3">蔬菜种子</option>
+            <option value="4">果树种子</option>
+            <option value="5">阿鲁比聂产种子</option>
+            <option value="6">摩尔菲斯产种子</option>
+            <option value="7">芙朵拉东方产种子</option>
+            <option value="8">芙朵拉南方产种子</option>
+            <option value="9">芙朵拉西方产种子</option>
+            <option value="10">芙朵拉北方产种子</option>
+            <option value="11">白色花朵种子</option>
+            <option value="12">红色花朵种子</option>
+            <option value="13">黄色花朵种子</option>
+            <option value="14">蓝色花朵种子</option>
+            <option value="15">绿色花朵种子</option>
+            <option value="16">紫色花朵种子</option>
+            <option value="17">水蓝色花朵种子</option>
+            <option value="18">萨拉德寒冰菜种子</option>
+            <option value="19">摩尔菲斯蜜李种子</option>
+            <option value="20">蛇果种子</option>
+            <option value="21">白芷种子</option>
+            <option value="22">无</option>
+        </select>
+    </form>
+
+    <form>
+        - 选择培育方式:
+        <select id="input-fertilizer" class="choice">
+            <option value="0">无（不培育）</option>
+            <option value="1">注入魔力（0G）</option>
+            <option value="2">用阿密特水灌溉 (300G)</option>
+            <option value="3">委托间苗 (500G)</option>
+            <option value="4">撒播骨粉 (1,000G)</option>
+            <option value="5">铺上卡雷德尼斯土壤 (1,500G)</option>
+            <option value="6"> 散播天马恩惠 (2,000G)</option>
+        </select>
+    </form>
+
+    <p class="inline-para"> - 大地祝福加成</p>
+    <input type="checkbox" id="blessing" class="choice">
+
+    <script>
+        function displayResults() {
+            // fetch input
+            var one = document.getElementById("input-one");
+            var two = document.getElementById("input-two");
+            var three = document.getElementById("input-three");
+            var four = document.getElementById("input-four");
+            var five = document.getElementById("input-five");
+            var fertilizer = document.getElementById("input-fertilizer");
+            var event = document.getElementById("blessing");
+
+            //find seed using the "numtag" index
+            var seed1 = seeds.find(item => item.numtag == one.value);
+            var seed2 = seeds.find(item => item.numtag == two.value);
+            var seed3 = seeds.find(item => item.numtag == three.value);
+            var seed4 = seeds.find(item => item.numtag == four.value);
+            var seed5 = seeds.find(item => item.numtag == five.value);
+
+            //calculate the score
+            var sum_of_rank = seed1.rank + seed2.rank + seed3.rank + seed4.rank + seed5.rank;
+            var sum_of_rare = seed1.rare + seed2.rare + seed3.rare + seed4.rare + seed5.rare;
+
+            //display the score
+            var score = 5 * (12 - sum_of_rank % 12) + Math.floor(0.8 * sum_of_rare) + 2 * (Number(fertilizer.value) + 4);
+            document.getElementById("score").innerHTML = score;
+
+            //find the score's corresponding true yield
+            var true_yield
+            switch (true) {
+                case (score >= 0 && score <= 20):
+                    true_yield = { level: "lv1", low: 0.7, high: 0.3, statbonus: 1 };
+                    break;
+                case (score >= 21 && score <= 40):
+                    true_yield = { level: "lv2", low: 0.2, high: 0.8, statbonus: 3 };
+                    break;
+                case (score >= 41 && score <= 60):
+                    true_yield = { level: "lv3", low: 0.7, high: 0.3, statbonus: 5 };
+                    break;
+                case (score >= 61 && score <= 80):
+                    true_yield = { level: "lv4", low: 0.4, high: 0.6, statbonus: 10 };
+                    break;
+                case (score >= 81 && score <= 90):
+                    true_yield = { level: "lv5", low: 0.8, high: 0.2, statbonus: 15 };
+                    break;
+                case (score >= 91 && score <= 100):
+                    true_yield = { level: "lv6", low: 0.3, high: 0.7, statbonus: 20 };
+            }
+
+            //seed number with or without event
+            var total_seeds = 0;
+            for (const item of [seed1, seed2, seed3, seed4, seed5]) {
+                if (item.rare != 0) { total_seeds += 1 };
+            };
+            var total_seeds_with_blessing = total_seeds
+            if (event.checked == true) { total_seeds_with_blessing += 5 };
+
+            //each seed's provided possibility of getting stat-booster item
+            var stat1 = { chance: (true_yield.statbonus + 5 * (seed1.rare - 1) + 6 * total_seeds_with_blessing + 5 * Number(fertilizer.value)) / total_seeds, whichup: seed1.statup };
+
+            var stat2 = { chance: (true_yield.statbonus + 5 * (seed2.rare - 1) + 6 * total_seeds_with_blessing + 5 * Number(fertilizer.value)) / total_seeds, whichup: seed2.statup };
+
+            var stat3 = { chance: (true_yield.statbonus + 5 * (seed3.rare - 1) + 6 * total_seeds_with_blessing + 5 * Number(fertilizer.value)) / total_seeds, whichup: seed3.statup };
+
+            var stat4 = { chance: (true_yield.statbonus + 5 * (seed4.rare - 1) + 6 * total_seeds_with_blessing + 5 * Number(fertilizer.value)) / total_seeds, whichup: seed4.statup };
+
+            var stat5 = { chance: (true_yield.statbonus + 5 * (seed5.rare - 1) + 6 * total_seeds_with_blessing + 5 * Number(fertilizer.value)) / total_seeds, whichup: seed5.statup };
+
+            // sum up each seed's stat-booster possibility
+            var total_stats = {};
+            for (const thestat of [stat1, stat2, stat3, stat4, stat5]) {
+                if (thestat.whichup) {
+                    if (total_stats[thestat.whichup]) { total_stats[thestat.whichup] += thestat.chance; }
+                    else {
+                        total_stats[thestat.whichup] = thestat.chance;
+                    };
+                }
+            }
+
+            //display stat-booster possibility
+            for (const statType in total_stats) {
+                total_stats[statType] = total_stats[statType].toFixed(2);
+            }
+            document.getElementById("stat booster").innerHTML = JSON.stringify(total_stats, null, 2);
+
+            //display size of harvest
+            document.getElementById("harvest size").innerHTML = 4 + Number(fertilizer.value) + total_seeds_with_blessing;
+
+            //possible harvest items
+            var harvest_list = [];
+            for (const j of [seed1, seed2, seed3, seed4, seed5]) { harvest_list = harvest_list.concat(j[true_yield.level]) }
+            var harvest = {};
+            for (const k of harvest_list) {
+                if (k !== undefined) { // Ensure k is not undefined before using it as a key
+                    if (harvest[k]) { harvest[k] += 1 / (total_seeds * 5) * 100; }
+                    else { harvest[k] = 1 / (total_seeds * 5) * 100 }
+                }
+            }
+
+            //display harvest items
+            for (const itemType in harvest) {
+                harvest[itemType] = harvest[itemType].toFixed(2);
+            }
+            document.getElementById("harvest items").innerHTML = JSON.stringify(harvest, null, 2);
+        }
+    </script>
+    <br>
+
+
+    <button id="myBtn">计算</button>
+    <p id="Btn-reminder" class="red-highlight">点击“计算”按钮</p>
+    <script>
+        function reminderdisappear() {
+            document.getElementById("Btn-reminder").style.visibility = 'hidden';
+        }
+        document.getElementById("myBtn").addEventListener("click", reminderdisappear)
+
+        function reminderagain() {
+            document.getElementById("Btn-reminder").style.visibility = 'visible';
+        }
+        const choiceElements = document.getElementsByClassName("choice");
+        for (let i = 0; i < choiceElements.length; i++) {
+            choiceElements[i].addEventListener("change", reminderagain);
+        }
+    </script>
+    
+
+    <p class="inline-para"> * 总得分为: </p>
+    <p id="score" class="underline-para"></p>
+    <p class="inline-para"> * 属性药产出概率(%)为: </p>
+    <p id="stat booster" class="underline-para"></p>
+    <script>
+        document.getElementById("myBtn").addEventListener("click", displayResults);
+    </script>
+    
+    <p class="inline-para">* 产出物数量为:</p>
+    <p id="harvest size" class="underline-para"></p>
+    
+    <p class="inline-para">* 预期产出物及概率(%)为:</p>
+    <p id="harvest items" class="underline-para"></p>
+
+</body>
+
+</html>
