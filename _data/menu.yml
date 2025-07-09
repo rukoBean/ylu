@@ -5,5 +5,9 @@ entries:
       show_more: true
       show_more_text: See archive...
       show_more_url: archive.html
-  - title: demo
-    url: test.html
+  - title: miscellaneous
+    entries:
+      - title: demo
+        url: test.html
+      - title: 火焰纹章风花雪月温室栽培计算器
+        url: fe-3h-calculator-zh.html
