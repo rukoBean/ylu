@@ -1,13 +1,16 @@
 entries:
-  - title: all posts
+  - title: DFT-related
     post_list:
+      category: DFT
       limit: 5
       show_more: true
       show_more_text: See archive...
-      show_more_url: archive.html
+      show_more_url: archive-DFT
   - title: miscellaneous
     entries:
       - title: demo
         url: test.html
-      - title: 火焰纹章风花雪月温室栽培计算器
-        url: fe-3h-calculator-mobile.html
+      - title: projects
+        url: projects.html
+      - title: inspirations
+        url: inspirations.html
