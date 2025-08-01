@@ -1,10 +1,20 @@
 title: ylu-weekly
-theme: no-style-please
+author: ylu
+email: rukobeanly@gmail.com
+url: https://www.ylu-weekly.live/
+description: >
+  a (hopefully) weekly live show of my life
 favicon: "favicon.ico"
-plugins:
-  - jekyll-feed
 kramdown:
   syntax_highlighter: rouge
   syntax_highlighter_opts:
     block:
       line_numbers: true
+theme: no-style-please
+theme_config:
+  back_home_text: ".."
+  date_format: "%Y-%m-%d"
+  show_description: false
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
