@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gardening Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5f7fa;
+            --text-color: #333;
+            --light-text-color: #666;
+            --border-color: #e0e0e0;
+            --background-color: #f0f2f5;
+            --card-background: #ffffff;
+            --success-color: #52c41a;
+            --error-color: #f5222d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 2em;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            padding: 2em;
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 0.5em;
+        }
+
+        .language-switcher {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 2em;
+            gap: 0.5em;
+        }
+
+        .lang-emoji {
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.2s ease;
+            padding-bottom: 4px;
+        }
+        .lang-emoji:hover {
+            transform: scale(1.2);
+        }
+        .lang-emoji.active {
+            transform: scale(1.2);
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5em;
+            margin-bottom: 2em;
+        }
+
+        .form-group {
+            background-color: var(--secondary-color);
+            padding: 1.5em;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .form-group:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        select, button {
+            width: 100%;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            background-color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        select:focus, button:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+
+        button {
+            cursor: pointer;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            background-color: #357abd;
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+
+        .red-highlight {
+            color: var(--error-color);
+            font-size: 0.9em;
+            text-align: center;
+            margin-top: 0.5em;
+            height: 1.2em;
+            visibility: hidden;
+        }
+
+        .results-container {
+            background-color: var(--card-background);
+            padding: 1.5em;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            margin-top: 2em;
+        }
+
+        .result-line {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 0.5em;
+            padding: 0.5em 0;
+        }
+
+        .result-line p:first-child {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0;
+        }
+        
+        .result-line p, .result-line pre {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .underline-para {
+            font-weight: 500;
+            font-size: 1.1em;
+        }
+
+        .blessing-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2em;
+            background-color: var(--secondary-color);
+            padding: 1em 1.5em;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+        }
+
+        #blessing {
+            margin-right: 10px;
+            width: auto;
+            height: 1.2em;
+            accent-color: var(--primary-color);
+        }
+
+        #blessing + label {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 data-lang="gardening_calculator_title">Gardening Calculator</h1>
+
+        <div class="language-switcher">
+            <span class="lang-emoji" data-lang-code="zh" title="中文">🇨🇳</span>
+            <span class="lang-emoji active" data-lang-code="en" title="English">🇬🇧</span>
+            <span class="lang-emoji" data-lang-code="ja" title="日本語">🇯🇵</span>
+        </div>
+
+        <div class="options-grid" id="seed-selectors">
+            <!-- Seed selectors will be generated here -->
+        </div>
+
+        <div class="form-group full-width">
+            <label for="input-fertilizer" data-lang="cultivation_method">Select Fertilizer:</label>
+            <select id="input-fertilizer" class="choice"></select>
+        </div>
+
+        <div class="blessing-section">
+            <input type="checkbox" id="blessing" class="choice">
+            <label for="blessing" data-lang="blessing_bonus">"Blessing of the Land" event</label>
+        </div>
+
+        <button id="calculateBtn" data-lang="calculate">Calculate</button>
+        <p id="reminder" class="red-highlight" data-lang="click_calculate_prompt">Click the "Calculate" Button</p>
+
+        <div class="results-container">
+            <div class="result-line">
+                <p data-lang="total_score">The score is:</p>
+                <p id="score" class="underline-para"></p>
+            </div>
+            <div class="result-line">
+                <p data-lang="stat_booster_chance">The possibility(%) of getting status booster item is:</p>
+                <pre id="stat-booster" class="underline-para"></pre>
+            </div>
+            <div class="result-line">
+                <p data-lang="harvest_amount">Besides status booster, the number of harvest items is:</p>
+                <p id="harvest-size" class="underline-para"></p>
+            </div>
+            <div class="result-line">
+                <p data-lang="expected_harvest">Besides status booster, the possibilities(%) of harvest items are:</p>
+                <pre id="harvest-items" class="underline-para"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const state = {
+                lang: 'en',
+                languageData: {},
+                seedsData: {}
+            };
+
+            const elements = {
+                seedSelectorsContainer: document.getElementById('seed-selectors'),
+                fertilizerSelect: document.getElementById('input-fertilizer'),
+                blessingCheckbox: document.getElementById('blessing'),
+                calculateBtn: document.getElementById('calculateBtn'),
+                reminder: document.getElementById('reminder'),
+                score: document.getElementById('score'),
+                statBooster: document.getElementById('stat-booster'),
+                harvestSize: document.getElementById('harvest-size'),
+                harvestItems: document.getElementById('harvest-items'),
+                langEmojis: document.querySelectorAll('.lang-emoji')
+            };
+
+            async function loadData() {
+                try {
+                    const [langResponse, seedsResponse] = await Promise.all([
+                        fetch('fe-language.json'),
+                        fetch('fe-seeds.json')
+                    ]);
+                    state.languageData = await langResponse.json();
+                    state.seedsData = await seedsResponse.json();
+                } catch (error) {
+                    console.error("Failed to load data:", error);
+                }
+            }
+
+            function updateTexts() {
+                const langMap = state.languageData[state.lang];
+                document.querySelectorAll('[data-lang]').forEach(el => {
+                    const key = el.getAttribute('data-lang');
+                    let text = langMap[key];
+                    if (text && text.includes('{number}')) {
+                        text = text.replace('{number}', el.dataset.number);
+                    }
+                    if (text) el.innerHTML = text;
+                });
+            }
+
+            function populateDropdowns() {
+                const langMap = state.languageData[state.lang];
+                const currentSeeds = state.seedsData[state.lang];
+
+                // Seed selectors
+                elements.seedSelectorsContainer.innerHTML = '';
+                for (let i = 1; i <= 5; i++) {
+                    const formGroup = document.createElement('div');
+                    formGroup.className = 'form-group';
+                    
+                    const label = document.createElement('label');
+                    label.setAttribute('for', `input-seed-${i}`);
+                    label.dataset.lang = 'select_seed';
+                    label.dataset.number = i;
+
+                    const select = document.createElement('select');
+                    select.id = `input-seed-${i}`;
+                    select.className = 'choice';
+                    
+                    currentSeeds.forEach(seed => {
+                        const option = document.createElement('option');
+                        option.value = seed.numtag;
+                        option.textContent = seed.fullname;
+                        select.appendChild(option);
+                    });
+
+                    formGroup.appendChild(label);
+                    formGroup.appendChild(select);
+                    elements.seedSelectorsContainer.appendChild(formGroup);
+                }
+
+                // Fertilizer selector
+                elements.fertilizerSelect.innerHTML = '';
+                for (const key in langMap.fertilizer_options) {
+                    const option = document.createElement('option');
+                    option.value = key;
+                    option.textContent = langMap.fertilizer_options[key];
+                    elements.fertilizerSelect.appendChild(option);
+                }
+            }
+            
+            function calculateResults() {
+                const seeds = state.seedsData[state.lang];
+                const getSeed = (id) => seeds.find(s => s.numtag == document.getElementById(id).value);
+
+                const selectedSeeds = [1, 2, 3, 4, 5].map(i => getSeed(`input-seed-${i}`));
+                const fertilizer = parseInt(elements.fertilizerSelect.value, 10);
+                const blessing = elements.blessingCheckbox.checked;
+
+                const sumOfRank = selectedSeeds.reduce((sum, s) => sum + s.rank, 0);
+                const sumOfRare = selectedSeeds.reduce((sum, s) => sum + s.rare, 0);
+                
+                const score = 5 * (12 - sumOfRank % 12) + Math.floor(0.8 * sumOfRare) + 2 * (fertilizer + 4);
+                elements.score.textContent = score;
+
+                const trueYieldLevels = [
+                    { score: 20, level: "lv1", statbonus: 1 }, { score: 40, level: "lv2", statbonus: 3 },
+                    { score: 60, level: "lv3", statbonus: 5 }, { score: 80, level: "lv4", statbonus: 10 },
+                    { score: 90, level: "lv5", statbonus: 15 }, { score: 100, level: "lv6", statbonus: 20 }
+                ];
+                const trueYield = trueYieldLevels.find(yl => score <= yl.score) || { level: "lv6", statbonus: 20 };
+
+                const activeSeedsCount = selectedSeeds.filter(s => s.rare !== 0).length;
+                if (activeSeedsCount === 0) {
+                    ['statBooster', 'harvestSize', 'harvestItems'].forEach(el => elements[el].textContent = 'N/A');
+                    return;
+                }
+
+                const totalSeedsWithBlessing = activeSeedsCount + (blessing ? 5 : 0);
+                
+                const totalStats = selectedSeeds.reduce((acc, seed) => {
+                    if (seed.statup) {
+                        const chance = (trueYield.statbonus + 5 * (seed.rare - 1) + 6 * totalSeedsWithBlessing + 5 * fertilizer) / activeSeedsCount;
+                        acc[seed.statup] = (acc[seed.statup] || 0) + chance;
+                    }
+                    return acc;
+                }, {});
+
+                elements.statBooster.innerHTML = Object.entries(totalStats)
+                    .map(([stat, chance]) => `${stat}: ${chance.toFixed(2)}%`)
+                    .join('<br>') || 'N/A';
+
+                elements.harvestSize.textContent = 4 + fertilizer + totalSeedsWithBlessing;
+
+                const harvestList = selectedSeeds.flatMap(s => s[trueYield.level] || []);
+                const harvestCounts = harvestList.reduce((acc, item) => {
+                    if (item) acc[item] = (acc[item] || 0) + 1;
+                    return acc;
+                }, {});
+
+                elements.harvestItems.innerHTML = Object.entries(harvestCounts)
+                    .map(([item, count]) => `${item}: ${(count / (activeSeedsCount * 5) * 100).toFixed(2)}%`)
+                    .join('<br>') || 'N/A';
+            }
+
+            function setReminderVisibility(visible) {
+                elements.reminder.style.visibility = visible ? 'visible' : 'hidden';
+            }
+
+            async function switchLanguage(lang) {
+                state.lang = lang;
+                elements.langEmojis.forEach(el => el.classList.toggle('active', el.dataset.langCode === lang));
+                populateDropdowns();
+                updateTexts();
+                setReminderVisibility(true);
+            }
+
+            // Event Listeners
+            elements.calculateBtn.addEventListener('click', () => {
+                calculateResults();
+                setReminderVisibility(false);
+            });
+
+            document.querySelector('.container').addEventListener('change', (e) => {
+                if (e.target.classList.contains('choice')) {
+                    setReminderVisibility(true);
+                }
+            });
+
+            elements.langEmojis.forEach(el => {
+                el.addEventListener('click', () => switchLanguage(el.dataset.langCode));
+            });
+
+            // Initial Load
+            await loadData();
+            await switchLanguage(state.lang);
+            setReminderVisibility(true);
+        });
+    </script>
+</body>
+</html>

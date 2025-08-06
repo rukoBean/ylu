@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>FE3h-Gardening</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Courier New;
+        }
+
+        button {
+            font-size: 1em
+        }
+
+        .underline-para {
+            text-decoration: underline;
+            display: inline;
+        }
+
+        .inline-para {
+            display: inline;
+        }
+
+        .red-highlight {
+            color: red;
+            font-size: 0.8em
+        }
+    </style>
+</head>
+
+<body>
+
+    <!--seeds constants-->
+    <script>
+        const seeds = [{
+            numtag: 1, fullname: "Mixed Herb Seeds",
+            rank: 27, rare: 1,
+            statup: "Str", statitem: "Rocky Burdock",
+            "lv1": ["Weeds", "Weeds", "Onion", "Mixed Herb Seeds", "Mixed Herb Seeds"],
+            "lv2": ["Mixed Herb Seeds", "Mixed Herb Seeds", "Turnip", "Cabbage", "Peach Currant"],
+            "lv3": ["Mixed Herb Seeds", "Albinean Berries", "Turnip", "Turnip", "Mixed Fruit Seeds"],
+            "lv4": ["Mixed Herb Seeds", "Peach Currant", "Turnip", "Yellow Flower Seeds", "Mixed Fruit Seeds"],
+            "lv5": ["Mixed Herb Seeds", "Carrot", "Northern Fodlan Seeds", "Chickpeas", "Cabbage"],
+            "lv6": ["Western Fodlan Seeds", "Tomato", "Northern Fodlan Seeds", "Daffodil", "Chickpeas"]
+        }, {
+            numtag: 2, fullname: "Root Vegetable Seeds",
+            rank: 49, rare: 1,
+            statup: "Def", statitem: "Ambrosia",
+            "lv1": ["Weeds", "Weeds", "Chickpeas", "Root Vegetable Seeds", "Root Vegetable Seeds"],
+            "lv2": ["Root Vegetable Seeds", "Albinean Berries", "Tomato", "Cabbage", "Cabbage"],
+            "lv3": ["Root Vegetable Seeds", "Carrot", "Cabbage", "Peach Currant", "Northern Fodlan Seeds"],
+            "lv4": ["Root Vegetable Seeds", "Noa Fruit", "Cabbage", "Pale-Blue Flower Seeds", "Northern Fodlan Seeds"],
+            "lv5": ["Root Vegetable Seeds", "Tomato", "Morfis Seeds", "Purple Flower Seeds", "Chickpeas"],
+            "lv6": ["Blue Flower Seeds", "Peach Currant", "Morfis Seeds", "Violet", "Turnip"]
+        }, {
+            numtag: 3, fullname: "Vegetable Seeds",
+            rank: 33, rare: 1,
+            statup: "Res", statitem: "White Verona",
+            "lv1": ["Dried Vegetables", "Dried Vegetables", "Chickpeas", "Vegetable Seeds", "Vegetable Seeds"],
+            "lv2": ["Dried Vegetables", "Chickpeas", "Onion", "Peach Currant", "Turnip"],
+            "lv3": ["Vegetable Seeds", "Onion", "Tomato", "Turnip", "Mixed Herb Seeds"],
+            "lv4": ["Vegetable Seeds", "Peach Currant", "Onion", "Purple Flower Seeds", "Noa Fruit"],
+            "lv5": ["Root Vegetable Seeds", "Tomato", "Morfis Seeds", "Purple Flower Seeds", "Chickpeas"],
+            "lv6": ["Blue Flower Seeds", "Peach Currant", "Morfis Seeds", "Violet", "Turnip"]
+        }, {
+            numtag: 4, fullname: "Mixed Fruit Seeds",
+            rank: 44, rare: 1,
+            statup: "Lck", statitem: "Miracle Bean",
+            "lv1": ["Zanado Fruit", "Zanado Fruit", "Peach Currant", "Mixed Fruit Seeds", "Mixed Fruit Seeds"],
+            "lv2": ["Mixed Fruit Seeds", "Northern Fodlan Seeds", "Northern Fodlan Seeds", "Peach Currant", "Root Vegetable Seeds"],
+            "lv3": ["Mixed Fruit Seeds", "Northern Fodlan Seeds", "Peach Currant", "Albinean Berries", "Root Vegetable Seeds"],
+            "lv4": ["Mixed Fruit Seeds", "Northern Fodlan Seeds", "Peach Currant", "White Flower Seeds", "Morfis Plum"],
+            "lv5": ["Mixed Fruit Seeds", "Northern Fodlan Seeds", "Eastern Fodlan Seeds", "Green Flower Seeds", "Onion"],
+            "lv6": ["Northern Fodlan Seeds", "Noa Fruit", "Eastern Fodlan Seeds", "Lily of the Valley", "Cabbage"]
+
+        }, {
+            numtag: 5, fullname: "Albinean Seeds",
+            rank: 20, rare: 2,
+            statup: "Cha", statitem: "Golden Apple",
+            "lv1": ["Zanado Fruit", "Zanado Fruit", "Peach Currant", "Albinean Seeds", "Albinean Seeds"],
+            "lv2": ["Albinean Seeds", "Chickpeas", "Peach Currant", "Albinean Berries", "Mixed Fruit Seeds"],
+            "lv3": ["Albinean Seeds", "Albinean Seeds", "Peach Currant", "Albinean Berries", "Root Vegetable Seeds"],
+            "lv4": ["Albinean Seeds", "Carrot", "Peach Currant", "Yellow Flower Seeds", "Root Vegetable Seeds"],
+            "lv5": ["Albinean Seeds", "Carrot", "Tomato", "White Flower Seeds", "Turnip"],
+            "lv6": ["Albinean Berries", "Chickpeas", "Tomato", "Violet", "Carrot"]
+        }, {
+            numtag: 6, fullname: "Morfis Seeds",
+            rank: 23, rare: 2,
+            statup: "Dex", statitem: "Ailell Pomegranate",
+            "lv1": ["Weeds", "Weeds", "Turnip", "Morfis Seeds", "Turnip"],
+            "lv2": ["Morfis Seeds", "Morfis Seeds", "Carrot", "Turnip", "Mixed Fruit Seeds"],
+            "lv3": ["Morfis Seeds", "Morfis Seeds", "Peach Currant", "Chickpeas", "Vegetable Seeds"],
+            "lv4": ["Morfis Seeds", "Carrot", "Turnip", "White Flower Seeds", "Vegetable Seeds"],
+            "lv5": ["Morfis Seeds", "Albinean Berries", "Tomato", "Green Flower Seeds", "Peach Currant"],
+            "lv6": ["Magdred Cherry", "Carrot", "Tomato", "Anemone", "Onion"]
+        }, {
+            numtag: 7, fullname: "Eastern Fodlan Seeds",
+            rank: 42, rare: 2,
+            statup: "Def", statitem: "Ambrosia",
+            "lv1": ["Weeds", "Weeds", "Tomato", "Eastern Fodlan Seeds", "Eastern Fodlan Seeds"],
+            "lv2": ["Eastern Fodlan Seeds", "Verona", "Onion", "Peach Currant", "Onion"],
+            "lv3": ["Eastern Fodlan Seeds", "Eastern Fodlan Seeds", "Onion", "Onion", "Morfis Seeds"],
+            "lv4": ["Eastern Fodlan Seeds", "Peach Currant", "Onion", "Green Flower Seeds", "Morfis Seeds"],
+            "lv5": ["Eastern Fodlan Seeds", "Tomato", "Nordsalat Seeds", "Blue Flower Seeds", "Cabbage"],
+            "lv6": ["Albinean Berries", "Verona", "Nordsalat", "Pitcher Plant", "Chickpeas"]
+        }, {
+            numtag: 8, fullname: "Southern Fodlan Seeds",
+            rank: 37, rare: 2,
+            statup: "Mag", statitem: "Premium Magic Herbs",
+            "lv1": ["Weeds", "Weeds", "Carrot", "Southern Fodlan Seeds", "Southern Fodlan Seeds"],
+            "lv2": ["Southern Fodlan Seeds", "Turnip", "Peach Currant", "Cabbage", "Western Fodlan Seeds"],
+            "lv3": ["Southern Fodlan Seeds", "Turnip", "Cabbage", "Peach Currant", "Northern Fodlan Seeds"],
+            "lv4": ["Southern Fodlan Seeds", "Turnip", "Verona", "Red Flower Seeds", "Magdred Cherry"],
+            "lv5": ["Southern Fodlan Seeds", "Turnip", "Morfis Plum", "Yellow Flower Seeds", "Magdred Cherry"],
+            "lv6": ["Verona", "Peach Currant", "Morfis Plum", "Baby’s Breath", "Chickpeas"]
+        }, {
+            numtag: 9, fullname: "Western Fodlan Seeds",
+            rank: 9, rare: 2,
+            statup: "HP", statitem: "Fruit of Life",
+            "lv1": ["Zanado Fruit", "Zanado Fruit", "Carrot", "Western Fodlan Seeds", "Western Fodlan Seeds"],
+            "lv2": ["Western Fodlan Seeds", "Noa Fruit", "Chickpeas", "Cabbage", "Root Vegetable Seeds"],
+            "lv3": ["Western Fodlan Seeds", "Noa Fruit", "Noa Fruit", "Peach Currant", "Vegetable Seeds"],
+            "lv4": ["Western Fodlan Seeds", "Noa Fruit", "Tomato", "Green Flower Seeds", "Albinean Berries"],
+            "lv5": ["Western Fodlan Seeds", "Noa Fruit", "Southern Fodlan Seeds", "Blue Flower Seeds", "Carrot"],
+            "lv6": ["Root Vegetable Seeds", "Noa Fruit", "Southern Fodlan Seeds", "Sunflower", "Onion"]
+        }, {
+            numtag: 10, fullname: "Northern Fodlan Seeds",
+            rank: 53, rare: 2,
+            statup: "Cha", statitem: "Golden Apple",
+            "lv1": ["Dried Vegetables", "Dried Vegetables", "Onion", "Northern Fodlan Seeds", "Northern Fodlan Seeds"],
+            "lv2": ["Northern Fodlan Seeds", "Tomato", "Chickpeas", "Mixed Fruit Seeds", "Mixed Fruit Seeds"],
+            "lv3": ["Northern Fodlan Seeds", "Carrot", "Noa Fruit", "Mixed Fruit Seeds", "Root Vegetable Seeds"],
+            "lv4": ["Northern Fodlan Seeds", "Peach Currant", "Noa Fruit", "Yellow Flower Seeds", "Albinean Berries"],
+            "lv5": ["Northern Fodlan Seeds", "Morfis Plum", "Morfis Seeds", "White Flower Seeds", "Chickpeas"],
+            "lv6": ["Southern Fodlan Seeds", "Chickpeas", "Morfis Seeds", "Rose", "Turnip"]
+        }, {
+            numtag: 11, fullname: "White Flower Seeds",
+            rank: 5, rare: 3,
+            statup: "Cha", statitem: "Golden Apple",
+            "lv1": ["Weeds", "Weeds", "Weeds", "Baby’s Breath", "White Flower Seeds"],
+            "lv2": ["Weeds", "White Flower Seeds", "Green Flower Seeds", "Daffodil", "Baby’s Breath"],
+            "lv3": ["Daffodil", "Baby’s Breath", "Lily", "Lily of the Valley", "Blue Flower Seeds"],
+            "lv4": ["Sunflower", "Anemone", "Green Flower Seeds", "Yellow Flower Seeds", "Purple Flower Seeds"],
+            "lv5": ["Sunflower", "Southern Fodlan Seeds", "Purple Flower Seeds", "Turnip", "Daffodil"],
+            "lv6": ["Daffodil", "Vegetable Seeds", "Western Fodlan Seeds", "Morfis-Plum Seeds", "Boa Fruit"]
+        }, {
+            numtag: 12, fullname: "Red Flower Seeds",
+            rank: 24, rare: 3,
+            statup: "Res", statitem: "White Verona",
+            "lv1": ["Weeds", "Weeds", "Weeds", "Carnation", "Red Flower Seeds"],
+            "lv2": ["Weeds", "Red Flower Seeds", "Yellow Flower Seeds", "Rose", "Carnation"],
+            "lv3": ["Rose", "Rose", "Carnation", "Lily", "White Flower Seeds"],
+            "lv4": ["Daffodil", "Lavender", "Yellow Flower Seeds", "Purple Flower Seeds", "Blue Flower Seeds"],
+            "lv5": ["Daffodil", "Onion", "Blue Flower Seeds", "Albinean Seeds", "Rose"],
+            "lv6": ["Rose", "Mixed Herb Seeds", "Albinean Seeds", "Nordsalat", "Magdred Cherry"]
+        }, {
+            numtag: 13, fullname: "Yellow Flower Seeds",
+            rank: 55, rare: 3,
+            statup: "Mag", statitem: "Premium Magic Herbs",
+            "lv1": ["Weeds", "Weeds", "Weeds", "Sunflower", "Yellow Flower Seeds"],
+            "lv2": ["Weeds", "Yellow Flower Seeds", "White Flower Seeds", "Sunflower", "Sunflower"],
+            "lv3": ["Sunflower", "Anemone", "Daffodil", "Lily", "Green Flower Seeds"],
+            "lv4": ["Carnation", "Rose", "White Flower Seeds", "Red Flower Seeds", "Pale-Blue Flower Seeds"],
+            "lv5": ["Carnation", "Morfis Seeds", "Pale-Blue Flower Seeds", "Onion", "Sunflower"],
+            "lv6": ["Sunflower", "Northern Fodlan Seeds", "Southern Fodlan Seeds", "Boa-Fruit Seeds", "Mixed Fruit Seeds"]
+        }, {
+            numtag: 14, fullname: "Blue Flower Seeds",
+            rank: 38, rare: 3,
+            statup: "HP", statitem: "Fruit of Life",
+            "lv1": ["Weeds", "Weeds", "Weeds", "Forget-me-nots", "Blue Flower Seeds"],
+            "lv2": ["Weeds", "Blue Flower Seeds", "Pale-Blue Flower Seeds", "Anemone", "Forget-me-nots"],
+            "lv3": ["Forget-me-nots", "Forget-me-nots", "Anemone", "Rose", "Purple Flower Seeds"],
+            "lv4": ["Violet", "Lily of the Valley", "Pale-Blue Flower Seeds", "Green Flower Seeds", "Yellow Flower Seeds"],
+            "lv5": ["Violet", "Chickpeas", "Yellow Flower Seeds", "Eastern Fodlan Seeds", "Forget-me-nots"],
+            "lv6": ["Forget-me-nots", "Root Vegetable Seeds", "Eastern Fodlan Seeds", "Morfis-Plum Seeds", "Nordsalat"]
+        }, {
+            numtag: 15, fullname: "Green Flower Seeds",
+            rank: 10, rare: 3,
+            statup: "Dex", statitem: "Ailell Pomegranate",
+            "lv1": ["Weeds", "Weeds", "Weeds", "Pitcher Plant", "Green Flower Seeds"],
+            "lv2": ["Weeds", "Green Flower Seeds", "Blue Flower Seeds", "Pitcher Plant", "Pitcher Plant"],
+            "lv3": ["Pitcher Plant", "Pitcher Plant", "Rose", "Rose", "Pale-Blue Flower Seeds"],
+            "lv4": ["Lily", "Violet", "Blue Flower Seeds", "White Flower Seeds", "Red Flower Seeds"],
+            "lv5": ["Lily", "Zanado Fruit", "Red Flower Seeds", "Cabbage", "Pitcher Plant"],
+            "lv6": ["Pitcher Plant", "Root Vegetable Seeds", "Eastern Fodlan Seeds", "Tomato", "Morfis Plum"]
+        }, {
+            numtag: 16, fullname: "Purple Flower Seeds",
+            rank: 16, rare: 3,
+            statup: "Str", statitem: "Rocky Burdock",
+            "lv1": ["Weeds", "Weeds", "Weeds", "Lavender", "Purple Flower Seeds"],
+            "lv2": ["Weeds", "Purple Flower Seeds", "Red Flower Seeds", "Violet", "Lavender"],
+            "lv3": ["Violet", "Rose", "Lavender", "Forget-me-nots", "Yellow Flower Seeds"],
+            "lv4": ["Pitcher Plant", "Baby’s Breath", "Red Flower Seeds", "Pale-Blue Flower Seeds", "Green Flower Seeds"],
+            "lv5": ["Pitcher Plant", "Cabbage", "Green Flower Seeds", "Mixed Herb Seeds", "Violet"],
+            "lv6": ["Lavender", "Western Fodlan Seeds", "Morfis Seeds", "Eastern Fodlan Seeds", "Albinean Berries"]
+        }, {
+            numtag: 17, fullname: "Pale-Blue Flower Seeds",
+            rank: 1, rare: 3,
+            statup: "Spd", statitem: "Speed Carrot",
+            "lv1": ["Weeds", "Weeds", "Weeds", "Carnation", "Pale-Blue Flower Seeds"],
+            "lv2": ["Weeds", "Pale-Blue Flower Seeds", "Purple Flower Seeds", "Carnation", "Carnation"],
+            "lv3": ["Anemone", "Anemone", "Forget-me-nots", "Rose", "Red Flower Seeds"],
+            "lv4": ["Lily of the Valley", "Pitcher Plant", "Purple Flower Seeds", "Blue Flower Seeds", "White Flower Seeds"],
+            "lv5": ["Lily of the Valley", "Northern Fodlan Seeds", "White Flower Seeds", "Turnip", "Anemone"],
+            "lv6": ["Forget-me-nots", "Mixed Fruit Seeds", "Northern Fodlan Seeds", "Tomato", "Verona"]
+        }, {
+            numtag: 18, fullname: "Nordsalat Seeds",
+            rank: 3, rare: 4,
+            statup: "Spd", statitem: "Speed Carrot",
+            "lv1": ["Dried Vegetables", "Verona", "Carrot", "Nordsalat Seeds", "Nordsalat Seeds"],
+            "lv2": ["Dried Vegetables", "Nordsalat Seeds", "Chickpeas", "Nordsalat", "Nordsalat"],
+            "lv3": ["Nordsalat Seeds", "Carrot", "Nordsalat", "Nordsalat", "Nordsalat"],
+            "lv4": ["Nordsalat Seeds", "Nordsalat", "Magdred Cherry", "Verona", "Albinean Berries"],
+            "lv5": ["Nordsalat", "Nordsalat", "Angelica Seeds", "Pale-Blue Flower Seeds", "Magdred Cherry"],
+            "lv6": ["Hellfire Grass", "Angelica", "Angelica Seeds", "Daffodil", "Turnip"]
+        }, {
+            numtag: 19, fullname: "Morfis-Plum Seeds",
+            rank: 18, rare: 4,
+            statup: "Dex", statitem: "Ailell Pomegranate",
+            "lv1": ["Zanado Fruit", "Zanado Fruit", "Peach Currant", "Noa Fruit", "Morfis-Plum Seeds"],
+            "lv2": ["Zanado Fruit", "Morfis-Plum Seeds", "Morfis Plum", "Morfis Plum", "Peach Currant"],
+            "lv3": ["Morfis-Plum Seeds", "Peach Currant", "Noa Fruit", "Morfis Plum", "Morfis Plum"],
+            "lv4": ["Morfis-Plum Seeds", "Tomato", "Morfis Plum", "Morfis Plum", "Albinean Seeds"],
+            "lv5": ["Morfis Plum", "Morfis Plum", "Eastern Fodlan Seeds", "Purple Flower Seeds", "Turnip"],
+            "lv6": ["Nordsalat Seeds", "Magdred Cherry", "Eastern Fodlan Seeds", "Forget-me-nots", "Zanado Master Fruit"]
+        }, {
+            numtag: 20, fullname: "Boa-Fruit Seeds",
+            rank: 31, rare: 5,
+            statup: "Lck", statitem: "Miracle Bean",
+            "lv1": ["Weeds", "Weeds", "Peach Currant", "Boa-Fruit Seeds", "Boa-Fruit Seeds"],
+            "lv2": ["Weeds", "Boa-Fruit Seeds", "Boa Fruit", "Boa Fruit", "Boa Fruit"],
+            "lv3": ["Boa-Fruit Seeds", "Peach Currant", "Boa Fruit", "Boa Fruit", "Boa Fruit"],
+            "lv4": ["Boa-Fruit Seeds", "Boa Fruit", "Boa Fruit", "Boa Fruit", "Angelica Seeds"],
+            "lv5": ["Boa Fruit", "Boa Fruit", "Zanado Master Fruit", "Red Flower Seeds", "Onion"],
+            "lv6": ["Angelica Seeds", "Zanado Master Fruit", "Mixed Herb Seeds", "Sunflower", "Cabbage"]
+        }, {
+            numtag: 21, fullname: "Angelica Seeds",
+            rank: 34, rare: 5,
+            statup: "Str", statitem: "Rocky Burdock",
+            "lv1": ["Weeds", "Weeds", "Tomato", "Angelica Seeds", "Angelica Seeds"],
+            "lv2": ["Weeds", "Angelica Seeds", "Angelica", "Nordsalat", "Angelica"],
+            "lv3": ["Angelica Seeds", "Angelica", "Magdred Cherry", "Angelica", "Angelica"],
+            "lv4": ["Angelica Seeds", "Angelica", "Angelica", "Angelica", "Morfis-Plum Seeds"],
+            "lv5": ["Angelica", "Angelica", "Hellfire Grass", "Yellow Flower Seeds", "Chickpeas"],
+            "lv6": ["Boa-Fruit Seeds", "Hellfire Grass", "Western Fodlan Seeds", "Lily", "Turnip"]
+        }, {
+            numtag: 22, fullname: "None",
+            rank: 0, rare: 0,
+            statup: "", statitem: "",
+            "lv1": [],
+            "lv2": [],
+            "lv3": [],
+            "lv4": [],
+            "lv5": [],
+            "lv6": []
+
+        }];
+    </script>
+    <br>
+
+    <form>
+        Select 1st seed:
+        <select id="input-one" class="choice">
+            <option value="1">Mixed Herb Seeds</option>
+            <option value="2">Root Vegetable Seeds</option>
+            <option value="3">Vegetable Seeds</option>
+            <option value="4">Mixed Fruit Seeds</option>
+            <option value="5">Albinean Seeds</option>
+            <option value="6">Morfis Seeds</option>
+            <option value="7">Eastern Fodlan Seeds</option>
+            <option value="8">Southern Fodlan Seeds</option>
+            <option value="9">Western Fodlan Seeds</option>
+            <option value="10">Northern Fodlan Seeds</option>
+            <option value="11">White Flower Seeds</option>
+            <option value="12">Red Flower Seeds</option>
+            <option value="13">Yellow Flower Seeds</option>
+            <option value="14">Blue Flower Seeds</option>
+            <option value="15">Green Flower Seeds</option>
+            <option value="16">Purple Flower Seeds</option>
+            <option value="17">Pale-Blue Flower Seeds</option>
+            <option value="18">Nordsalat Seeds</option>
+            <option value="19">Morfis-Plum Seeds</option>
+            <option value="20">Boa-Fruit Seeds</option>
+            <option value="21">Angelica Seeds</option>
+            <option value="22">None</option>
+        </select>
+    </form>
+    <br>
+
+    <form>
+        Select 2nd seed:
+        <select id="input-two" class="choice">
+            <option value="1">Mixed Herb Seeds</option>
+            <option value="2">Root Vegetable Seeds</option>
+            <option value="3">Vegetable Seeds</option>
+            <option value="4">Mixed Fruit Seeds</option>
+            <option value="5">Albinean Seeds</option>
+            <option value="6">Morfis Seeds</option>
+            <option value="7">Eastern Fodlan Seeds</option>
+            <option value="8">Southern Fodlan Seeds</option>
+            <option value="9">Western Fodlan Seeds</option>
+            <option value="10">Northern Fodlan Seeds</option>
+            <option value="11">White Flower Seeds</option>
+            <option value="12">Red Flower Seeds</option>
+            <option value="13">Yellow Flower Seeds</option>
+            <option value="14">Blue Flower Seeds</option>
+            <option value="15">Green Flower Seeds</option>
+            <option value="16">Purple Flower Seeds</option>
+            <option value="17">Pale-Blue Flower Seeds</option>
+            <option value="18">Nordsalat Seeds</option>
+            <option value="19">Morfis-Plum Seeds</option>
+            <option value="20">Boa-Fruit Seeds</option>
+            <option value="21">Angelica Seeds</option>
+            <option value="22">None</option>
+        </select>
+    </form>
+    <br>
+
+    <form>
+        Select 3rd seed:
+        <select id="input-three" class="choice">
+            <option value="1">Mixed Herb Seeds</option>
+            <option value="2">Root Vegetable Seeds</option>
+            <option value="3">Vegetable Seeds</option>
+            <option value="4">Mixed Fruit Seeds</option>
+            <option value="5">Albinean Seeds</option>
+            <option value="6">Morfis Seeds</option>
+            <option value="7">Eastern Fodlan Seeds</option>
+            <option value="8">Southern Fodlan Seeds</option>
+            <option value="9">Western Fodlan Seeds</option>
+            <option value="10">Northern Fodlan Seeds</option>
+            <option value="11">White Flower Seeds</option>
+            <option value="12">Red Flower Seeds</option>
+            <option value="13">Yellow Flower Seeds</option>
+            <option value="14">Blue Flower Seeds</option>
+            <option value="15">Green Flower Seeds</option>
+            <option value="16">Purple Flower Seeds</option>
+            <option value="17">Pale-Blue Flower Seeds</option>
+            <option value="18">Nordsalat Seeds</option>
+            <option value="19">Morfis-Plum Seeds</option>
+            <option value="20">Boa-Fruit Seeds</option>
+            <option value="21">Angelica Seeds</option>
+            <option value="22">None</option>
+        </select>
+    </form>
+    <br>
+
+    <form>
+        Select 4th seed:
+        <select id="input-four" class="choice">
+            <option value="1">Mixed Herb Seeds</option>
+            <option value="2">Root Vegetable Seeds</option>
+            <option value="3">Vegetable Seeds</option>
+            <option value="4">Mixed Fruit Seeds</option>
+            <option value="5">Albinean Seeds</option>
+            <option value="6">Morfis Seeds</option>
+            <option value="7">Eastern Fodlan Seeds</option>
+            <option value="8">Southern Fodlan Seeds</option>
+            <option value="9">Western Fodlan Seeds</option>
+            <option value="10">Northern Fodlan Seeds</option>
+            <option value="11">White Flower Seeds</option>
+            <option value="12">Red Flower Seeds</option>
+            <option value="13">Yellow Flower Seeds</option>
+            <option value="14">Blue Flower Seeds</option>
+            <option value="15">Green Flower Seeds</option>
+            <option value="16">Purple Flower Seeds</option>
+            <option value="17">Pale-Blue Flower Seeds</option>
+            <option value="18">Nordsalat Seeds</option>
+            <option value="19">Morfis-Plum Seeds</option>
+            <option value="20">Boa-Fruit Seeds</option>
+            <option value="21">Angelica Seeds</option>
+            <option value="22">None</option>
+        </select>
+    </form>
+    <br>
+
+    <form>
+        Select 5th seed:
+        <select id="input-five" class="choice">
+            <option value="1">Mixed Herb Seeds</option>
+            <option value="2">Root Vegetable Seeds</option>
+            <option value="3">Vegetable Seeds</option>
+            <option value="4">Mixed Fruit Seeds</option>
+            <option value="5">Albinean Seeds</option>
+            <option value="6">Morfis Seeds</option>
+            <option value="7">Eastern Fodlan Seeds</option>
+            <option value="8">Southern Fodlan Seeds</option>
+            <option value="9">Western Fodlan Seeds</option>
+            <option value="10">Northern Fodlan Seeds</option>
+            <option value="11">White Flower Seeds</option>
+            <option value="12">Red Flower Seeds</option>
+            <option value="13">Yellow Flower Seeds</option>
+            <option value="14">Blue Flower Seeds</option>
+            <option value="15">Green Flower Seeds</option>
+            <option value="16">Purple Flower Seeds</option>
+            <option value="17">Pale-Blue Flower Seeds</option>
+            <option value="18">Nordsalat Seeds</option>
+            <option value="19">Morfis-Plum Seeds</option>
+            <option value="20">Boa-Fruit Seeds</option>
+            <option value="21">Angelica Seeds</option>
+            <option value="22">None</option>
+        </select>
+    </form>
+    <br><br>
+
+    <!--Fertilizer-->
+    <form>
+        - Select Fertilizer:
+        <select id="input-fertilizer" class="choice">
+            <option value="0">No Cultivation</option>
+            <option value="1">Infuse with magic (0G)</option>
+            <option value="2">Pour Airmid water (300G)</option>
+            <option value="3">Prune (500G)</option>
+            <option value="4">Scatter Bonemeal (1,000G)</option>
+            <option value="5">Use Caledonian soil (1,500G)</option>
+            <option value="6"> Spread pegasus blessings (2,000G)</option>
+        </select>
+    </form>
+    <br>
+
+    <!--event-->
+    <p class="inline-para"> - “Blessing of the Land” event</p>
+    <input type="checkbox" id="blessing" class="choice">
+    <br><br>
+
+
+    <!--the display result function-->
+    <script>
+        function displayResults() {
+            // fetch input
+            var one = document.getElementById("input-one");
+            var two = document.getElementById("input-two");
+            var three = document.getElementById("input-three");
+            var four = document.getElementById("input-four");
+            var five = document.getElementById("input-five");
+            var fertilizer = document.getElementById("input-fertilizer");
+            var event = document.getElementById("blessing");
+
+            //find seed using the "numtag" index
+            var seed1 = seeds.find(item => item.numtag == one.value);
+            var seed2 = seeds.find(item => item.numtag == two.value);
+            var seed3 = seeds.find(item => item.numtag == three.value);
+            var seed4 = seeds.find(item => item.numtag == four.value);
+            var seed5 = seeds.find(item => item.numtag == five.value);
+
+            //calculate the score
+            var sum_of_rank = seed1.rank + seed2.rank + seed3.rank + seed4.rank + seed5.rank;
+            var sum_of_rare = seed1.rare + seed2.rare + seed3.rare + seed4.rare + seed5.rare;
+
+            //display the score
+            var score = 5 * (12 - sum_of_rank % 12) + Math.floor(0.8 * sum_of_rare) + 2 * (Number(fertilizer.value) + 4);
+            document.getElementById("score").innerHTML = score;
+
+            //find the score's corresponding true yield
+            var true_yield
+            switch (true) {
+                case (score >= 0 && score <= 20):
+                    true_yield = { level: "lv1", low: 0.7, high: 0.3, statbonus: 1 };
+                    break;
+                case (score >= 21 && score <= 40):
+                    true_yield = { level: "lv2", low: 0.2, high: 0.8, statbonus: 3 };
+                    break;
+                case (score >= 41 && score <= 60):
+                    true_yield = { level: "lv3", low: 0.7, high: 0.3, statbonus: 5 };
+                    break;
+                case (score >= 61 && score <= 80):
+                    true_yield = { level: "lv4", low: 0.4, high: 0.6, statbonus: 10 };
+                    break;
+                case (score >= 81 && score <= 90):
+                    true_yield = { level: "lv5", low: 0.8, high: 0.2, statbonus: 15 };
+                    break;
+                case (score >= 91 && score <= 100):
+                    true_yield = { level: "lv6", low: 0.3, high: 0.7, statbonus: 20 };
+            }
+
+            //seed number with or without event
+            var total_seeds = 0;
+            for (const item of [seed1, seed2, seed3, seed4, seed5]) {
+                if (item.rare != 0) { total_seeds += 1 };
+            };
+            var total_seeds_with_blessing = total_seeds
+            if (event.checked == true) { total_seeds_with_blessing += 5 };
+
+            //each seed's provided possibility of getting stat-booster item
+            var stat1 = { chance: (true_yield.statbonus + 5 * (seed1.rare - 1) + 6 * total_seeds_with_blessing + 5 * Number(fertilizer.value)) / total_seeds, whichup: seed1.statup };
+
+            var stat2 = { chance: (true_yield.statbonus + 5 * (seed2.rare - 1) + 6 * total_seeds_with_blessing + 5 * Number(fertilizer.value)) / total_seeds, whichup: seed2.statup };
+
+            var stat3 = { chance: (true_yield.statbonus + 5 * (seed3.rare - 1) + 6 * total_seeds_with_blessing + 5 * Number(fertilizer.value)) / total_seeds, whichup: seed3.statup };
+
+            var stat4 = { chance: (true_yield.statbonus + 5 * (seed4.rare - 1) + 6 * total_seeds_with_blessing + 5 * Number(fertilizer.value)) / total_seeds, whichup: seed4.statup };
+
+            var stat5 = { chance: (true_yield.statbonus + 5 * (seed5.rare - 1) + 6 * total_seeds_with_blessing + 5 * Number(fertilizer.value)) / total_seeds, whichup: seed5.statup };
+
+            // sum up each seed's stat-booster possibility
+            var total_stats = {};
+            for (const thestat of [stat1, stat2, stat3, stat4, stat5]) {
+                if (total_stats[thestat.whichup]) { total_stats[thestat.whichup] += thestat.chance; }
+                else if (thestat.whichup) {
+                    total_stats[thestat.whichup] = thestat.chance;
+                };
+            }
+
+            //display stat-booster possibility
+            for (const statType in total_stats) {
+                    total_stats[statType] = total_stats[statType].toFixed(2);
+            }
+            document.getElementById("stat booster").innerHTML = JSON.stringify(total_stats, null, 2);
+
+            //display size of harvest
+            document.getElementById("harvest size").innerHTML = 4 + Number(fertilizer.value) + total_seeds_with_blessing;
+
+            //possible harvest items
+            var harvest_list = [];
+            for (const j of [seed1, seed2, seed3, seed4, seed5]) { harvest_list = harvest_list.concat(j[true_yield.level]) }
+            var harvest = {};
+            for (const k of harvest_list) {
+                if (harvest[k]) { harvest[k] += 1 / (total_seeds * 5) * 100; }
+                else { harvest[k] = 1 / (total_seeds * 5) * 100 }
+            }
+
+            //display harvest items
+            for (const itemType in harvest) {
+                    harvest[itemType] = harvest[itemType].toFixed(2);
+            }
+            document.getElementById("harvest items").innerHTML = JSON.stringify(harvest, null, 2);
+        }
+    </script>
+    <br>
+
+
+    <!--Button to start calculation-->
+    <button id="myBtn">Calculate</button>
+    <!--Reminder to click button again-->
+    <p id="Btn-reminder" class="red-highlight">Click the "Calculate" Button</p>
+    <script>
+        function reminderdisappear() {
+            document.getElementById("Btn-reminder").style.visibility = 'hidden';
+        }
+        document.getElementById("myBtn").addEventListener("click", reminderdisappear)
+
+        function reminderagain() {
+            document.getElementById("Btn-reminder").style.visibility = 'visible';
+        }
+        const choiceElements = document.getElementsByClassName("choice");
+        for (let i = 0; i < choiceElements.length; i++) {
+            choiceElements[i].addEventListener("change", reminderagain);
+        }
+    </script>
+    <br>
+
+    <p class="inline-para"> * The score is: </p>
+    <p id="score" class="underline-para"></p><br><br>
+    <p class="inline-para"> * The possibility(%) of getting status booster item is: </p>
+    <p id="stat booster" class="underline-para"></p>
+    <script>
+        document.getElementById("myBtn").addEventListener("click", displayResults);
+    </script>
+    <br><br>
+    <p class="inline-para">* Besides status booster, the number of harvest items is:</p>
+    <p id="harvest size" class="underline-para"></p>
+    <br><br>
+    <p class="inline-para">* Besides status booster, the possibilities(%) of harvest items are:</p>
+    <p id="harvest items" class="underline-para"></p>
+
+</body>
+
+</html>

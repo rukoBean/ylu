@@ -1,0 +1,65 @@
+{
+    "zh": {
+        "gardening_calculator_title": "火焰纹章风花雪月温室栽培计算器",
+        "select_seed": "选择第{number}个种子:",
+        "cultivation_method": "选择培育方式:",
+        "blessing_bonus": "大地祝福加成",
+        "calculate": "计算",
+        "click_calculate_prompt": "点击“计算”按钮",
+        "total_score": "* 总得分为: ",
+        "stat_booster_chance": "* 属性药产出概率(%)为: ",
+        "harvest_amount": "* 产出物数量为:",
+        "expected_harvest": "* 预期产出物及概率(%)为:",
+        "fertilizer_options": {
+            "0": "无（不培育）",
+            "1": "注入魔力（0G）",
+            "2": "用阿密特水灌溉 (300G)",
+            "3": "委托间苗 (500G)",
+            "4": "撒播骨粉 (1,000G)",
+            "5": "铺上卡雷德尼斯土壤 (1,500G)",
+            "6": "散播天马恩惠 (2,000G)"
+        }
+    },
+    "en": {
+        "gardening_calculator_title": "FE3H Greenhouse Calculator",
+        "select_seed": "Select seed #{number}:",
+        "cultivation_method": "Select Fertilizer:",
+        "blessing_bonus": "“Blessing of the Land” event",
+        "calculate": "Calculate",
+        "click_calculate_prompt": "Click the \"Calculate\" Button",
+        "total_score": "* The score is: ",
+        "stat_booster_chance": "* The possibility(%) of getting status booster item is: ",
+        "harvest_amount": "* Besides status booster, the number of harvest items is:",
+        "expected_harvest": "* Besides status booster, the possibilities(%) of harvest items are:",
+        "fertilizer_options": {
+            "0": "No Cultivation",
+            "1": "Infuse with magic (0G)",
+            "2": "Pour Airmid water (300G)",
+            "3": "Prune (500G)",
+            "4": "Scatter Bonemeal (1,000G)",
+            "5": "Use Caledonian soil (1,500G)",
+            "6": "Spread pegasus blessings (2,000G)"
+        }
+    },
+    "ja": {
+        "gardening_calculator_title": "FE風花雪月栽培確率計算機",
+        "select_seed": "{number}番目の種を選択:",
+        "cultivation_method": "育成方法を選択:",
+        "blessing_bonus": "「大地の祝福」イベント",
+        "calculate": "計算する",
+        "click_calculate_prompt": "「計算」ボタンをクリックしてください",
+        "total_score": "* 合計スコアは: ",
+        "stat_booster_chance": "* 能力アップアイテムの入手確率 (%): ",
+        "harvest_amount": "* 収穫アイテム数: ",
+        "expected_harvest": "* 予想される収穫アイテムと確率 (%): ",
+        "fertilizer_options": {
+            "0": "育成なし",
+            "1": "魔力を注ぐ (0G)",
+            "2": "アミッドの水を与える (300G)",
+            "3": "間引きを頼む (500G)",
+            "4": "骨粉をまく (1,000G)",
+            "5": "カレドニスの土を盛る (1,500G)",
+            "6": "天馬の恵みを与える (2,000G)"
+        }
+    }
+}
