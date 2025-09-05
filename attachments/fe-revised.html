@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gardening Calculator</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #4a90e2;
@@ -16,16 +13,15 @@
             --border-color: #e0e0e0;
             --background-color: #f0f2f5;
             --card-background: #ffffff;
-            --success-color: #52c41a;
             --error-color: #f5222d;
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             --border-radius: 8px;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: sans-serif;
             margin: 0;
-            padding: 2em;
+            padding: 0.5em;
             background-color: var(--background-color);
             color: var(--text-color);
             line-height: 1.6;
@@ -38,31 +34,31 @@
         .container {
             max-width: 900px;
             width: 100%;
-            padding: 2em;
+            padding-top: 0em;
+            padding-bottom:1em;
+            padding-left:1em;
+            padding-right:1em;
             background-color: var(--card-background);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
         }
 
         h1 {
+            font-size: 24px;
             text-align: center;
             color: var(--primary-color);
-            margin-bottom: 0.5em;
         }
 
         .language-switcher {
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            margin-bottom: 2em;
+            margin-bottom: 1em;
             gap: 0.5em;
         }
-
         .lang-emoji {
             cursor: pointer;
             font-size: 1.5rem;
-            transition: all 0.2s ease;
-            padding-bottom: 4px;
         }
         .lang-emoji:hover {
             transform: scale(1.2);
@@ -74,17 +70,18 @@
 
         .options-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5em;
-            margin-bottom: 2em;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.5em;
+            margin-bottom: 0.5em;
         }
 
         .form-group {
             background-color: var(--secondary-color);
-            padding: 1.5em;
+            padding: 5px;
             border-radius: var(--border-radius);
             border: 1px solid var(--border-color);
-            transition: box-shadow 0.3s ease;
+            transition: box-shadow 0.3s ease; 
+            margin-bottom: 0.5em;
         }
 
         .form-group:hover {
@@ -104,19 +101,12 @@
 
         select, button {
             width: 100%;
-            padding: 12px;
+            padding: 5px;
             border-radius: var(--border-radius);
             border: 1px solid var(--border-color);
             background-color: #fff;
-            font-family: 'Inter', sans-serif;
+            font-family: sans-serif;
             font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        select:focus, button:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
         }
 
         button {
@@ -152,7 +142,7 @@
             padding: 1.5em;
             border-radius: var(--border-radius);
             border: 1px solid var(--border-color);
-            margin-top: 2em;
+            margin-top: 0.5em;
         }
 
         .result-line {
@@ -171,28 +161,29 @@
         
         .result-line p, .result-line pre {
             margin: 0;
-            font-family: 'Inter', sans-serif;
+            font-family: sans-serif;
         }
         
         .underline-para {
             font-weight: 500;
             font-size: 1.1em;
+            font-family:sans-serif;
         }
 
         .blessing-section {
             display: flex;
             align-items: center;
-            margin-bottom: 2em;
+            justify-content: flex-start;
+            margin-bottom: 10px;
             background-color: var(--secondary-color);
-            padding: 1em 1.5em;
+            padding: 0.5em;
             border-radius: var(--border-radius);
             border: 1px solid var(--border-color);
         }
 
         #blessing {
-            margin-right: 10px;
             width: auto;
-            height: 1.2em;
+            height: auto;
             accent-color: var(--primary-color);
         }
 
