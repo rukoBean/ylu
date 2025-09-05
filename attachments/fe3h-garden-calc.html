@@ -1,3 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gardening Calculator</title>
+  <style>
+    :root {
+      --primary-color: #4a90e2;
+      --text-color: #333;
+      --border-color: #e0e0e0;
+      --background-color: #ffffff;
+      --error-color: #f5222d;
+    }
+
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 1em;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    .main-content {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5em;
+    }
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: var(--primary-color);
+      margin: 0;
+    }
+
+    .language-switcher {
+      display: flex;
+      gap: 0.5em;
+    }
+
+    .lang-emoji {
+      cursor: pointer;
+      font-size: 1.5rem;
+      transition: transform 0.2s ease;
+    }
+
+    .lang-emoji:hover {
+      transform: scale(1.2);
+    }
+
+    .lang-emoji.active {
+      border-bottom: 2px solid var(--primary-color);
+    }
+
+    .fertilizer-section, .blessing-section {
+      display: flex;
+      justify-content:flex-start ;
+      align-items: center;
+    }
+
+    label {
+      font-weight: 600;
+      margin-right:20px;
+      color: var(--text-color);
+    }
+
+    select{
+      width: auto;
+      padding: 0.75em;
+      font-size: 0.9rem;
+      border: 1px solid var(--border-color);
+      background-color: #fff;
+    }
+
+    .results-container {
+      padding: 1.5em;
+      border: 1px solid var(--border-color);
+      background-color: var(--background-color);
+    }
+
+    .result-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.5em;
+      padding: 0.5em 0;
+    }
+
+    .result-line p:first-child {
+      font-weight: 600;
+      color: var(--primary-color);
+      margin: 0;
+    }
+
+    .result-line p, .result-line pre {
+      margin: 0;
+    }
+
+    .underline-para {
+      font-weight: 500;
+      font-size: 1.1em;
+    }
+
+    .blessing-section {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      justify-content: flex-start;
+    }
+
+    #blessing + label {
+      font-weight: 500;
+      color: var(--text-color);
+      margin-bottom: 0;
+    }
+
+    .selected-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .available-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 0.6rem;
+    }
+
+    .tagpill, .selected-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.4rem 0.8rem;
+      border-radius: 999px;
+      cursor: pointer;
+      position: relative;
+      font-size: 0.9rem;
+      user-select: none;
+    }
+
+    .tagpill {
+      background: #ecf0f1;
+      border: 1px solid #bdc3c7;
+      color: #34495e;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .tagpill:hover {
+      border-color: #3498db;
+      color: #3498db;
+    }
+
+    .tagpill.disabled {
+      cursor: not-allowed;
+      background-color: #f0f0f0;
+      color: #b0b0b0;
+      border-color: #e0e0e0;
+      opacity: 0.7;
+    }
+
+    .tagpill.disabled:hover {
+      border-color: #e0e0e0;
+      color: #b0b0b0;
+    }
+
+    .selected-tag {
+      background-color: #2ecc71;
+      color: white;
+    }
+
+    .selected-tag::after {
+      content: '×';
+      font-weight: bold;
+      margin-left: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .tagpill-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: #3498db;
+      color: #fff;
+      font-size: 0.7rem;
+      border-radius: 999px;
+      padding: 0 6px;
+      border: 2px solid white;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 0.5em;
+      }
+      h1 {
+        font-size: 20px;
+      }
+      .main-content {
+        gap: 1em;
+      }
+      .tagpill, .selected-tag {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="main-content">
+  <header class="header-container">
+    <h1 data-lang="gardening_calculator_title">Gardening Calculator</h1>
+    <div class="language-switcher">
+      <span class="lang-emoji" data-lang-code="zh" title="中文">🇨🇳</span>
+      <span class="lang-emoji active" data-lang-code="en" title="English">🇬🇧</span>
+      <span class="lang-emoji" data-lang-code="ja" title="日本語">🇯🇵</span>
+    </div>
+  </header>
+
+  <div id="seed-selectors">
+    <div class="available-grid" id="available-items"></div><div style="height: 10px;"></div>
+    <div class="selected-items" id="selected-items"></div>
+  </div>
+
+  <div class="fertilizer-section">
+    <label for="input-fertilizer" data-lang="cultivation_method">Select Fertilizer:</label>
+    <select id="input-fertilizer" class="choice"></select>
+  </div>
+
+  <div class="blessing-section">
+    <input type="checkbox" id="blessing" class="choice">
+    <label for="blessing" data-lang="blessing_bonus">"Blessing of the Land" event</label>
+  </div>
+
+  <div class="results-container">
+    <div class="result-line">
+      <p data-lang="total_score">The score is:</p>
+      <p id="score" class="underline-para"></p>
+    </div>
+    <div class="result-line">
+      <p data-lang="stat_booster_chance">The possibility(%) of getting status booster item is:</p>
+      <pre id="stat-booster" class="underline-para"></pre>
+    </div>
+    <div class="result-line">
+      <p data-lang="harvest_amount">Besides status booster, the number of harvest items is:</p>
+      <p id="harvest-size" class="underline-para"></p>
+    </div>
+    <div class="result-line">
+      <p data-lang="expected_harvest">Besides status booster, the possibilities(%) of harvest items are:</p>
+      <pre id="harvest-items" class="underline-para"></pre>
+    </div>
+  </div>
+</div>
+
+<script id="seeds-json" type="application/json">
 {
     "zh": [
         { "numtag": 1, "fullname": "草本植物种子", "rank": 27, "rare": 1, "statup": "力量", "statitem": "岩石牛蒡", "lv1": ["杂草", "杂草", "洋葱", "草本植物种子", "草本植物种子"], "lv2": ["草本植物种子", "草本植物种子", "芜菁", "卷心菜", "桃醋栗"], "lv3": ["草本植物种子", "阿鲁比聂莓", "芜菁", "芜菁", "果树种子"], "lv4": ["草本植物种子", "桃醋栗", "芜菁", "黄色花朵种子", "果树种子"], "lv5": ["草本植物种子", "胡萝卜", "芙朵拉北方种子", "鹰嘴豆", "卷心菜"], "lv6": ["芙朵拉西方种子", "番茄", "芙朵拉北方种子", "水仙", "鹰嘴豆"] },
@@ -69,3 +331,249 @@
         { "numtag": 21, "fullname": "アンゼリカの種", "rank": 34, "rare": 5, "statup": "力", "statitem": "岩ゴボウ", "lv1": ["雑草", "雑草", "トマト", "アンゼリカの種", "アンゼリカの種"], "lv2": ["雑草", "アンゼリカの種", "アンゼリカ", "ノルドサラト", "アンゼリカ"], "lv3": ["アンゼリカの種", "アンゼリカ", "マグドレドキルシュ", "アンゼリカ", "アンゼリカ"], "lv4": ["アンゼリカの種", "アンゼリカ", "アンゼリカ", "アンゼリカ", "モルフィスプラムの種"], "lv5": ["アンゼリカ", "アンゼリカ", "煉獄草", "黄色の花の種", "ヒヨコマメ"], "lv6": ["ボアフルーツの種", "煉獄草", "フォドラ西方産の種", "百合", "カブ"] }
     ]
 }
+</script>
+
+<script id="language-json" type="application/json">
+  {
+    "zh": {
+        "gardening_calculator_title": "火焰纹章风花雪月温室栽培计算器",
+        "select_seed": "选择第{number}个种子:",
+        "cultivation_method": "选择培育方式:",
+        "blessing_bonus": "大地祝福加成",
+        "calculate": "计算",
+        "click_calculate_prompt": "点击“计算”按钮",
+        "total_score": "* 总得分为: ",
+        "stat_booster_chance": "* 属性药产出概率(%)为: ",
+        "harvest_amount": "* 产出物数量为:",
+        "expected_harvest": "* 预期产出物及概率(%)为:",
+        "fertilizer_options": {
+            "0": "无（不培育）",
+            "1": "注入魔力（0G）",
+            "2": "用阿密特水灌溉 (300G)",
+            "3": "委托间苗 (500G)",
+            "4": "撒播骨粉 (1,000G)",
+            "5": "铺上卡雷德尼斯土壤 (1,500G)",
+            "6": "散播天马恩惠 (2,000G)"
+        }
+    },
+    "en": {
+        "gardening_calculator_title": "FE3H Greenhouse Calculator",
+        "select_seed": "Select seed #{number}:",
+        "cultivation_method": "Select Fertilizer:",
+        "blessing_bonus": "“Blessing of the Land” event",
+        "calculate": "Calculate",
+        "click_calculate_prompt": "Click the \"Calculate\" Button",
+        "total_score": "* The score is: ",
+        "stat_booster_chance": "* The possibility(%) of getting status booster item is: ",
+        "harvest_amount": "* Besides status booster, the number of harvest items is:",
+        "expected_harvest": "* Besides status booster, the possibilities(%) of harvest items are:",
+        "fertilizer_options": {
+            "0": "No Cultivation",
+            "1": "Infuse with magic (0G)",
+            "2": "Pour Airmid water (300G)",
+            "3": "Prune (500G)",
+            "4": "Scatter Bonemeal (1,000G)",
+            "5": "Use Caledonian soil (1,500G)",
+            "6": "Spread pegasus blessings (2,000G)"
+        }
+    },
+    "ja": {
+        "gardening_calculator_title": "FE風花雪月栽培確率計算機",
+        "select_seed": "{number}番目の種を選択:",
+        "cultivation_method": "育成方法を選択:",
+        "blessing_bonus": "「大地の祝福」イベント",
+        "calculate": "計算する",
+        "click_calculate_prompt": "「計算」ボタンをクリックしてください",
+        "total_score": "* 合計スコアは: ",
+        "stat_booster_chance": "* 能力アップアイテムの入手確率 (%): ",
+        "harvest_amount": "* 収穫アイテム数: ",
+        "expected_harvest": "* 予想される収穫アイテムと確率 (%): ",
+        "fertilizer_options": {
+            "0": "育成なし",
+            "1": "魔力を注ぐ (0G)",
+            "2": "アミッドの水を与える (300G)",
+            "3": "間引きを頼む (500G)",
+            "4": "骨粉をまく (1,000G)",
+            "5": "カレドニスの土を盛る (1,500G)",
+            "6": "天馬の恵みを与える (2,000G)"
+        }
+    }
+}
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const state = { lang: 'en', languageData: {}, seedsData: {} };
+
+  const elements = {
+    fertilizerSelect: document.getElementById('input-fertilizer'),
+    blessingCheckbox: document.getElementById('blessing'),
+    score: document.getElementById('score'),
+    statBooster: document.getElementById('stat-booster'),
+    harvestSize: document.getElementById('harvest-size'),
+    harvestItems: document.getElementById('harvest-items'),
+    langEmojis: document.querySelectorAll('.lang-emoji'),
+    selectedContainer: document.getElementById('selected-items'),
+    availableContainer: document.getElementById('available-items')
+  };
+
+async function loadData() {
+    try {
+      state.languageData = JSON.parse(document.getElementById('language-json').textContent);
+      state.seedsData = JSON.parse(document.getElementById('seeds-json').textContent);
+    } catch (error) {
+      console.error("Failed to parse data:", error);
+    }
+  }
+
+
+  function updateTexts() {
+    const langMap = state.languageData[state.lang];
+    document.querySelectorAll('[data-lang]').forEach(el => {
+      const key = el.getAttribute('data-lang');
+      const text = langMap[key];
+      if (text) el.innerHTML = text;
+    });
+  }
+
+  function populateDropdowns() {
+    const langMap = state.languageData[state.lang];
+    elements.fertilizerSelect.innerHTML = '';
+    for (const key in langMap.fertilizer_options) {
+      const option = document.createElement('option');
+      option.value = key;
+      option.textContent = langMap.fertilizer_options[key];
+      elements.fertilizerSelect.appendChild(option);
+    }
+  }
+
+  let selectedSeeds = [];
+
+  function renderSelected() {
+    elements.selectedContainer.innerHTML = "";
+    selectedSeeds.forEach((seed, idx) => {
+      const pill = document.createElement("div");
+      pill.className = "selected-tag";
+      pill.textContent = seed.fullname;
+
+      pill.onclick = () => {
+        selectedSeeds.splice(idx, 1);
+        renderSelected();
+        renderAvailable();
+        calculateResults();
+      };
+
+      elements.selectedContainer.appendChild(pill);
+    });
+    calculateResults();
+  }
+
+  function renderAvailable() {
+    elements.availableContainer.innerHTML = "";
+    const seeds = state.seedsData[state.lang];
+    if (!seeds) return;
+
+    const isMaxReached = selectedSeeds.length >= 5;
+
+    seeds.forEach(seed => {
+      const count = selectedSeeds.filter(s => s.numtag === seed.numtag).length;
+      const pill = document.createElement("div");
+      pill.className = "tagpill";
+      pill.textContent = seed.fullname;
+
+      if (count > 0) {
+        const badge = document.createElement("span");
+        badge.className = "tagpill-badge";
+        badge.textContent = count;
+        pill.appendChild(badge);
+      }
+
+      if (!isMaxReached || count > 0) {
+        pill.onclick = () => {
+          if (selectedSeeds.length < 5) {
+            selectedSeeds.push(seed);
+            renderSelected();
+            renderAvailable();
+            calculateResults();
+          }
+        };
+      } else {
+        pill.classList.add("disabled");
+      }
+
+      elements.availableContainer.appendChild(pill);
+    });
+  }
+
+  function getSelectedSeeds() { return selectedSeeds; }
+
+  function calculateResults() {
+    const selectedSeeds = getSelectedSeeds();
+    const fertilizer = parseInt(elements.fertilizerSelect.value, 10);
+    const blessing = elements.blessingCheckbox.checked;
+
+    const sumOfRank = selectedSeeds.reduce((sum, s) => sum + s.rank, 0);
+    const sumOfRare = selectedSeeds.reduce((sum, s) => sum + s.rare, 0);
+    const score = 5 * (12 - sumOfRank % 12) + Math.floor(0.8 * sumOfRare) + 2 * (fertilizer + 4);
+    elements.score.textContent = score;
+
+    const trueYieldLevels = [
+      { score: 20, level: "lv1", statbonus: 1 }, { score: 40, level: "lv2", statbonus: 3 },
+      { score: 60, level: "lv3", statbonus: 5 }, { score: 80, level: "lv4", statbonus: 10 },
+      { score: 90, level: "lv5", statbonus: 15 }, { score: 100, level: "lv6", statbonus: 20 }
+    ];
+    const trueYield = trueYieldLevels.find(yl => score <= yl.score) || { level: "lv6", statbonus: 20 };
+
+    const activeSeedsCount = selectedSeeds.filter(s => s.rare !== 0).length;
+    if (activeSeedsCount === 0) {
+      ['statBooster', 'harvestSize', 'harvestItems'].forEach(el => elements[el].textContent = 'N/A');
+      return;
+    }
+
+    const totalSeedsWithBlessing = activeSeedsCount + (blessing ? 5 : 0);
+    const totalStats = selectedSeeds.reduce((acc, seed) => {
+      if (seed.statup) {
+        const chance = (trueYield.statbonus + 5 * (seed.rare - 1) + 6 * totalSeedsWithBlessing + 5 * fertilizer) / activeSeedsCount;
+        acc[seed.statup] = (acc[seed.statup] || 0) + chance;
+      }
+      return acc;
+    }, {});
+
+    elements.statBooster.innerHTML = Object.entries(totalStats)
+      .map(([stat, chance]) => `${stat}: ${chance.toFixed(2)}%`)
+      .join('<br>') || 'N/A';
+
+    elements.harvestSize.textContent = 4 + fertilizer + totalSeedsWithBlessing;
+    const harvestList = selectedSeeds.flatMap(s => s[trueYield.level] || []);
+    const harvestCounts = harvestList.reduce((acc, item) => {
+      if (item) acc[item] = (acc[item] || 0) + 1;
+      return acc;
+    }, {});
+
+    elements.harvestItems.innerHTML = Object.entries(harvestCounts)
+      .map(([item, count]) => `${item}: ${(count / (activeSeedsCount * 5) * 100).toFixed(2)}%`)
+      .join('<br>') || 'N/A';
+  }
+
+  async function switchLanguage(lang) {
+    state.lang = lang;
+    elements.langEmojis.forEach(el => el.classList.toggle('active', el.dataset.langCode === lang));
+    populateDropdowns();
+    updateTexts();
+    selectedSeeds = [];
+    renderSelected();
+    renderAvailable();
+  }
+
+  elements.fertilizerSelect.addEventListener('change', calculateResults);
+  elements.blessingCheckbox.addEventListener('change', calculateResults);
+  elements.langEmojis.forEach(el => el.addEventListener('click', () => switchLanguage(el.dataset.langCode)));
+
+  await loadData();
+  await switchLanguage(state.lang);
+  calculateResults(); // initial display
+});
+</script>
+</body>
+</html>
