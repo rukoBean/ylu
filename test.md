@@ -10,34 +10,26 @@ category: example
 # 1. Tabs
 
 <div class="tab">
-  <button class="tablinks" onclick="tabs(event, 'INCAR')" id="defaultOpen">INCAR</button>
-  <button class="tablinks" onclick="tabs(event, 'POSCAR')">POSCAR</button>
-  <button class="tablinks" onclick="tabs(event, 'KPOINTS')">KPOINTS</button>
-  <button class="tablinks" onclick="tabs(event, 'POTCAR')">POTCAR</button>
+  <button class="tablinks" onclick="tabs(event, 'id1')" id="defaultOpen">Item1</button>
+  <button class="tablinks" onclick="tabs(event, 'id2')">Item2</button>
+  <button class="tablinks" onclick="tabs(event, 'id3')">Item3</button>
+  <button class="tablinks" onclick="tabs(event, 'id4')">Item4</button>
 </div>
 
-<div id="INCAR" class="tabcontent">
-  <pre>
-SYSTEM = Fe
-  </pre>
+<div id="id1" class="tabcontent">
+<p>This is item 1.</p>
 </div>
 
-<div id="POSCAR" class="tabcontent">
-  <pre>
-Fe BCC
-  </pre>
+<div id="id2" class="tabcontent">
+<p>This is item 2.</p>
 </div>
 
-<div id="KPOINTS" class="tabcontent">
-  <pre>
-Auto
-  </pre>
+<div id="id3" class="tabcontent">
+<p>This is item 3.</p>
 </div>
 
-<div id="POTCAR" class="tabcontent">
-  <pre>
-PAW_PBE Fe 06Sep2000                   
-  </pre>
+<div id="id4" class="tabcontent">
+<p>This is item 4.</p>
 </div>
 
 
@@ -46,27 +38,21 @@ PAW_PBE Fe 06Sep2000
 
 <div class="accordion">
 	<div class="accordion-item">
-		<div class="accordion-item-header">INCAR</div>
+		<div class="accordion-item-header">Item1</div>
 		<div class="accordion-item-body">
-			 <pre>
-SYSTEM = Fe
-  </pre>
+			<p>This is item 1.</p>
 		</div>
 	</div>
 	<div class="accordion-item">
-		<div class="accordion-item-header">POSCAR</div>
+		<div class="accordion-item-header">Item2</div>
 		<div class="accordion-item-body">
-			  <pre>
-Fe BCC
-  </pre>
+			<p>This is item 2.</p>
 		</div>
 	</div>
 	<div class="accordion-item">
-		<div class="accordion-item-header">KPOINTS</div>
+		<div class="accordion-item-header">Item3</div>
 		<div class="accordion-item-body">
-			<pre>
-Auto
-  </pre>
+			<p>This is item 3.</p>
 		</div>
 	</div>
 </div>
