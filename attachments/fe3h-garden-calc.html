@@ -545,15 +545,49 @@ async function loadData() {
       .join('<br>') || 'N/A';
 
     elements.harvestSize.textContent = 4 + fertilizer + totalSeedsWithBlessing;
-    const harvestList = selectedSeeds.flatMap(s => s[trueYield.level] || []);
-    const harvestCounts = harvestList.reduce((acc, item) => {
-      if (item) acc[item] = (acc[item] || 0) + 1;
-      return acc;
-    }, {});
+    const harvestCounts = {};
+    function addHarvestFromLevel(seed, level, weight) {
+      (seed[level] || []).forEach(item => {
+        if (item) harvestCounts[item] = (harvestCounts[item] || 0) + weight;
+      });
+    }
 
-    elements.harvestItems.innerHTML = Object.entries(harvestCounts)
-      .map(([item, count]) => `${item}: ${(count / (activeSeedsCount * 5) * 100).toFixed(2)}%`)
-      .join('<br>') || 'N/A';
+    selectedSeeds.forEach(seed => {
+      switch (trueYield.level) {
+        case "lv1":
+          addHarvestFromLevel(seed, "lv1", 0.7);
+          addHarvestFromLevel(seed, "lv2", 0.3);
+          break;
+        case "lv2":
+          addHarvestFromLevel(seed, "lv1", 0.2);
+          addHarvestFromLevel(seed, "lv2", 0.8);
+          break;
+        case "lv3":
+          addHarvestFromLevel(seed, "lv3", 0.7);
+          addHarvestFromLevel(seed, "lv4", 0.3);
+          break;
+        case "lv4":
+          addHarvestFromLevel(seed, "lv3", 0.4);
+          addHarvestFromLevel(seed, "lv4", 0.6);
+          break;
+        case "lv5":
+          addHarvestFromLevel(seed, "lv5", 0.8);
+          addHarvestFromLevel(seed, "lv6", 0.2);
+          break;
+        case "lv6":
+          addHarvestFromLevel(seed, "lv5", 0.3);
+          addHarvestFromLevel(seed, "lv6", 0.7);
+          break;
+      }
+    });
+
+    const totalWeight = Object.values(harvestCounts).reduce((a, b) => a + b, 0);
+    const sortedHarvest = Object.entries(harvestCounts)
+        .map(([item, count]) => [item, count / totalWeight * 100])
+        .sort((a, b) => b[1] - a[1]);
+    elements.harvestItems.innerHTML = sortedHarvest.length
+        ? sortedHarvest.map(([item, chance]) => `${item}: ${chance.toFixed(2)}%`).join('<br>')
+        : 'N/A';
   }
 
   async function switchLanguage(lang) {
