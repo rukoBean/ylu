@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FE3H Garden Reverse Query</title>
+<style>
+:root{--primary:#4a90e2;--text:#333;--border:#e0e0e0;--bg:#fff;--success:#52c41a}
+body{font-family:sans-serif;margin:0;padding:1em;background:#f5f5f5;color:var(--text);line-height:1.6}
+.main{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:1.5em}
+.header{display:flex;justify-content:space-between;align-items:center;background:white;padding:1.5em;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+h1{font-size:24px;color:var(--primary);margin:0}
+.lang-switcher{display:flex;gap:0.5em}
+.lang-emoji{cursor:pointer;font-size:1.5rem;transition:transform 0.2s}
+.lang-emoji:hover{transform:scale(1.2)}
+.lang-emoji.active{border-bottom:2px solid var(--primary)}
+.section{background:white;padding:1.5em;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.section-title{font-size:18px;font-weight:600;color:var(--primary);margin-bottom:1em;border-bottom:2px solid var(--border);padding-bottom:0.5em}
+.inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.8em}
+.inv-item{display:flex;justify-content:space-between;align-items:center;padding:0.5em;border:1px solid var(--border);border-radius:4px;background:#fafafa}
+.inv-item label{flex:1;font-size:0.9rem}
+.inv-item input{width:60px;padding:0.3em;border:1px solid var(--border);border-radius:4px;text-align:center}
+.ctrl-row{display:flex;flex-wrap:wrap;gap:1em;align-items:center}
+.ctrl-group{display:flex;align-items:center;gap:0.5em}
+.ctrl-group label{font-weight:600}
+select,input[type="number"]{padding:0.5em;border:1px solid var(--border);border-radius:4px;background:white}
+.btn{padding:0.75em 1.5em;background:var(--primary);color:white;border:none;border-radius:4px;cursor:pointer;font-weight:600;transition:background 0.2s}
+.btn:hover{background:#3a7bc8}
+.btn:disabled{background:#ccc;cursor:not-allowed}
+.result-card{border:1px solid var(--border);border-radius:4px;padding:1em;margin-bottom:1em;background:#fafafa}
+.result-card.top{border-color:var(--success);border-width:2px;background:#f6ffed}
+.result-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5em;padding-bottom:0.5em;border-bottom:1px solid var(--border)}
+.result-rank{font-size:1.2em;font-weight:bold;color:var(--primary)}
+.result-value{font-size:1.1em;font-weight:600;color:var(--success)}
+.seed-pills{display:flex;flex-wrap:wrap;gap:0.5em;margin:0.5em 0}
+.seed-pill{background:var(--primary);color:white;padding:0.3em 0.8em;border-radius:999px;font-size:0.85rem}
+.result-details{margin-top:0.5em;font-size:0.9rem;color:#666}
+.progress-bar{width:100%;height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin:1em 0}
+.progress-fill{height:100%;background:var(--primary);transition:width 0.3s}
+@media(max-width:768px){.inv-grid{grid-template-columns:1fr}.ctrl-row{flex-direction:column;align-items:stretch}}
+</style>
+</head>
+<body>
+<div class="main">
+<header class="header">
+<h1 id="title" data-i18n="title">FE3H Garden Reverse Query</h1>
+<div class="lang-switcher">
+<span class="lang-emoji active" data-lang="en" title="English">🇬🇧</span>
+<span class="lang-emoji" data-lang="zh" title="中文">🇨🇳</span>
+<span class="lang-emoji" data-lang="ja" title="日本語">🇯🇵</span>
+</div>
+</header>
+
+<div class="section">
+<div class="section-title" data-i18n="inv-title">Seed Inventory</div>
+<div class="inv-grid" id="inventory-grid"></div>
+<div style="margin-top:1em;display:flex;gap:1em">
+<button class="btn" onclick="setAllInv(10)" data-i18n="btn-set10">Set All to 10</button>
+<button class="btn" onclick="setAllInv(99)" data-i18n="btn-set99">Set All to 99</button>
+<button class="btn" onclick="setAllInv(0)" data-i18n="btn-clear">Clear All</button>
+</div>
+</div>
+
+<div class="section">
+<div class="section-title" data-i18n="settings-title">Query Settings</div>
+<div class="ctrl-row">
+<div class="ctrl-group">
+<label for="max-seeds" data-i18n="lbl-maxseeds">Max Seeds:</label>
+<select id="max-seeds">
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5" selected>5</option>
+</select>
+</div>
+<div class="ctrl-group">
+<label for="fertilizer" data-i18n="lbl-fertilizer">Fertilizer:</label>
+<select id="fertilizer"></select>
+</div>
+<div class="ctrl-group">
+<input type="checkbox" id="blessing">
+<label for="blessing" data-i18n="lbl-blessing">Blessing Event</label>
+</div>
+</div>
+<div class="ctrl-row" style="margin-top:1em">
+<div class="ctrl-group">
+<label for="query-type" data-i18n="lbl-optimize">Optimize For:</label>
+<select id="query-type" onchange="toggleQueryType()">
+<option value="stat" data-i18n="opt-stat">Stat Booster Probability</option>
+<option value="harvest" data-i18n="opt-harvest">Harvest Item Expected Value</option>
+</select>
+</div>
+<div class="ctrl-group" id="stat-group">
+<label for="target-stat" data-i18n="lbl-targetstat">Target Stat:</label>
+<select id="target-stat"></select>
+</div>
+<div class="ctrl-group" id="harvest-group" style="display:none">
+<label for="target-harvest" data-i18n="lbl-targetitem">Target Item:</label>
+<select id="target-harvest"></select>
+</div>
+</div>
+<div style="margin-top:1em">
+<button class="btn" id="calc-btn" onclick="optimize()" data-i18n="btn-calc">Calculate Optimal Combinations</button>
+</div>
+<div id="progress-container" style="display:none">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+<div id="progress-text" style="text-align:center;color:#666"></div>
+</div>
+</div>
+
+<div class="section" id="results-section" style="display:none">
+<div class="section-title" data-i18n="results-title">Optimization Results</div>
+<div id="results-container"></div>
+</div>
+</div>
+
+<script>
+const SEEDS_URL = 'fe3h-garden-calc.html';
+let state = {lang:'en',allSeeds:{},seeds:[],inventory:{}};
+
+const i18n = {
+  en: {
+    title: 'FE3H Garden Reverse Query',
+    'inv-title': 'Seed Inventory',
+    'btn-set10': 'Set All to 10',
+    'btn-set99': 'Set All to 99',
+    'btn-clear': 'Clear All',
+    'settings-title': 'Query Settings',
+    'lbl-maxseeds': 'Max Seeds:',
+    'lbl-fertilizer': 'Fertilizer:',
+    'lbl-blessing': 'Blessing Event',
+    'lbl-optimize': 'Optimize For:',
+    'opt-stat': 'Stat Booster Probability',
+    'opt-harvest': 'Harvest Item Expected Value',
+    'lbl-targetstat': 'Target Stat:',
+    'lbl-targetitem': 'Target Item:',
+    'btn-calc': 'Calculate Optimal Combinations',
+    'results-title': 'Optimization Results',
+    'lbl-seeds': 'Seeds:',
+    'txt-probability': 'probability',
+    'txt-expecteditems': 'expected items',
+    'txt-evaluating': 'Evaluated',
+    'txt-combinations': 'combinations...'
+  },
+  zh: {
+    title: '火纹风花雪月温室反向查询',
+    'inv-title': '种子库存',
+    'btn-set10': '全部设为10',
+    'btn-set99': '全部设为99',
+    'btn-clear': '全部清空',
+    'settings-title': '查询设置',
+    'lbl-maxseeds': '最大种子数:',
+    'lbl-fertilizer': '培育方式:',
+    'lbl-blessing': '大地祝福',
+    'lbl-optimize': '优化目标:',
+    'opt-stat': '属性药概率',
+    'opt-harvest': '收获物期望值',
+    'lbl-targetstat': '目标属性:',
+    'lbl-targetitem': '目标物品:',
+    'btn-calc': '计算最优组合',
+    'results-title': '优化结果',
+    'lbl-seeds': '种子:',
+    'txt-probability': '概率',
+    'txt-expecteditems': '期望物品数',
+    'txt-evaluating': '已评估',
+    'txt-combinations': '个组合...'
+  },
+  ja: {
+    title: '風花雪月温室逆引きツール',
+    'inv-title': '種の在庫',
+    'btn-set10': '全て10に設定',
+    'btn-set99': '全て99に設定',
+    'btn-clear': '全てクリア',
+    'settings-title': 'クエリ設定',
+    'lbl-maxseeds': '最大種数:',
+    'lbl-fertilizer': '育成方法:',
+    'lbl-blessing': '大地の祝福',
+    'lbl-optimize': '最適化対象:',
+    'opt-stat': '能力アップアイテム確率',
+    'opt-harvest': '収穫アイテム期待値',
+    'lbl-targetstat': '目標ステータス:',
+    'lbl-targetitem': '目標アイテム:',
+    'btn-calc': '最適な組み合わせを計算',
+    'results-title': '最適化結果',
+    'lbl-seeds': '種:',
+    'txt-probability': '確率',
+    'txt-expecteditems': '期待アイテム数',
+    'txt-evaluating': '評価済み',
+    'txt-combinations': '組み合わせ...'
+  }
+};
+
+// Extract seed data from the original calculator
+async function loadSeeds() {
+  try {
+    const resp = await fetch(SEEDS_URL);
+    const html = await resp.text();
+    const match = html.match(/<script id="seeds-json"[^>]*>([\s\S]*?)<\/script>/);
+    if (match) {
+      state.allSeeds = JSON.parse(match[1]);
+      switchLanguage('en');
+    }
+  } catch(e) {
+    console.error('Failed to load seeds:',e);
+  }
+}
+
+function updateI18n() {
+  const texts = i18n[state.lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (texts[key]) {
+      if (el.tagName === 'OPTION') {
+        el.textContent = texts[key];
+      } else {
+        el.textContent = texts[key];
+      }
+    }
+  });
+}
+
+function switchLanguage(lang) {
+  state.lang = lang;
+  state.seeds = state.allSeeds[lang];
+  
+  // Update active language indicator
+  document.querySelectorAll('.lang-emoji').forEach(el => {
+    el.classList.toggle('active', el.dataset.lang === lang);
+  });
+  
+  // Update all i18n text
+  updateI18n();
+  
+  // Initialize or update inventory
+  if(Object.keys(state.inventory).length === 0) {
+    initInventory();
+  }
+  renderInventory();
+  populateSelectors();
+}
+
+function initInventory() {
+  state.seeds.forEach(s => state.inventory[s.numtag] = 0);
+}
+
+function renderInventory() {
+  const grid = document.getElementById('inventory-grid');
+  grid.innerHTML = state.seeds.map(s => 
+    `<div class="inv-item">
+      <label>${s.fullname}</label>
+      <input type="number" min="0" max="99" value="${state.inventory[s.numtag]||0}" 
+        onchange="state.inventory[${s.numtag}]=+this.value">
+    </div>`
+  ).join('');
+}
+
+function setAllInv(val) {
+  Object.keys(state.inventory).forEach(k => state.inventory[k] = val);
+  renderInventory();
+}
+
+function populateSelectors() {
+  // Fertilizer
+  const fert = document.getElementById('fertilizer');
+  const fertMap = {
+    en: ['No Cultivation','Infuse with magic (0G)','Pour Airmid water (300G)',
+         'Prune (500G)','Scatter Bonemeal (1,000G)','Use Caledonian soil (1,500G)',
+         'Spread pegasus blessings (2,000G)'],
+    zh: ['无（不培育）','注入魔力（0G）','用阿密特水灌溉 (300G)',
+         '委托间苗 (500G)','撒播骨粉 (1,000G)','铺上卡雷德尼斯土壤 (1,500G)',
+         '散播天马恩惠 (2,000G)'],
+    ja: ['育成なし','魔力を注ぐ (0G)','アミッドの水を与える (300G)',
+         '間引きを頼む (500G)','骨粉をまく (1,000G)','カレドニスの土を盛る (1,500G)',
+         '天馬の恵みを与える (2,000G)']
+  };
+  const fertilizers = fertMap[state.lang];
+  fert.innerHTML = fertilizers.map((f,i)=>`<option value="${i}">${f}</option>`).join('');
+  
+  // Stats - use the same names as in the seed data for each language
+  const statsMap = {
+    en: ['HP','Str','Mag','Dex','Spd','Lck','Def','Res','Cha'],
+    zh: ['HP','力量','魔力','技巧','速度','幸运','物防','魔防','魅力'],
+    ja: ['HP','力','魔力','技','速さ','幸運','守備','魔防','魅力']
+  };
+  const stats = statsMap[state.lang];
+  document.getElementById('target-stat').innerHTML = 
+    stats.map(s=>`<option value="${s}">${s}</option>`).join('');
+  
+  // Harvest items - collect all unique items
+  const items = new Set();
+  state.seeds.forEach(s => {
+    ['lv1','lv2','lv3','lv4','lv5','lv6'].forEach(lv => {
+      if(s[lv]) s[lv].forEach(item => items.add(item));
+    });
+  });
+  document.getElementById('target-harvest').innerHTML =
+    Array.from(items).sort().map(i=>`<option value="${i}">${i}</option>`).join('');
+}
+
+function toggleQueryType() {
+  const type = document.getElementById('query-type').value;
+  document.getElementById('stat-group').style.display = type==='stat'?'flex':'none';
+  document.getElementById('harvest-group').style.display = type==='harvest'?'flex':'none';
+}
+
+function calculateScore(seeds) {
+  const sumRank = seeds.reduce((s,seed)=>s+seed.rank,0);
+  const sumRare = seeds.reduce((s,seed)=>s+seed.rare,0);
+  const fert = +document.getElementById('fertilizer').value;
+  return 5*(12-sumRank%12)+Math.floor(0.8*sumRare)+2*(fert+4);
+}
+
+function getYieldLevel(score) {
+  const levels = [[20,'lv1',1],[40,'lv2',3],[60,'lv3',5],[80,'lv4',10],[90,'lv5',15],[100,'lv6',20]];
+  for(let [thresh,lv,bonus] of levels) if(score<=thresh) return {lv,bonus};
+  return {lv:'lv6',bonus:20};
+}
+
+function calculateStatProb(seeds,targetStat) {
+  const fert = +document.getElementById('fertilizer').value;
+  const blessing = document.getElementById('blessing').checked;
+  const activeSeeds = seeds.filter(s=>s.rare!==0).length;
+  if(!activeSeeds) return 0;
+  
+  const score = calculateScore(seeds);
+  const {bonus} = getYieldLevel(score);
+  const totalSeedsWithBlessing = activeSeeds + (blessing?5:0);
+  
+  let prob = 0;
+  seeds.forEach(seed => {
+    if(seed.statup === targetStat) {
+      const chance = (bonus + 5*(seed.rare-1) + 6*totalSeedsWithBlessing + 5*fert) / activeSeeds;
+      prob += chance;
+    }
+  });
+  return prob;
+}
+
+function calculateHarvestExp(seeds,targetItem) {
+  const fert = +document.getElementById('fertilizer').value;
+  const blessing = document.getElementById('blessing').checked;
+  const score = calculateScore(seeds);
+  const {lv} = getYieldLevel(score);
+  
+  const activeSeeds = seeds.filter(s=>s.rare!==0).length;
+  const harvestSize = 4 + fert + activeSeeds + (blessing?5:0);
+  
+  const weights = {lv1:[0.7,0.3,0,0,0,0],lv2:[0.2,0.8,0,0,0,0],
+    lv3:[0,0,0.7,0.3,0,0],lv4:[0,0,0.4,0.6,0,0],
+    lv5:[0,0,0,0,0.8,0.2],lv6:[0,0,0,0,0.3,0.7]};
+  
+  const w = weights[lv];
+  const harvestCounts = {};
+  
+  // Build harvest distribution exactly like in original calculator
+  seeds.forEach(seed => {
+    ['lv1','lv2','lv3','lv4','lv5','lv6'].forEach((level,idx) => {
+      if(w[idx]>0 && seed[level]) {
+        seed[level].forEach(item => {
+          if(item) harvestCounts[item] = (harvestCounts[item] || 0) + w[idx];
+        });
+      }
+    });
+  });
+  
+  // Calculate total weight and target item probability
+  const totalWeight = Object.values(harvestCounts).reduce((a,b) => a+b, 0);
+  const targetWeight = harvestCounts[targetItem] || 0;
+  const probability = totalWeight > 0 ? targetWeight / totalWeight : 0;
+  
+  return probability * harvestSize;
+}
+
+function* generateCombinations(maxSeeds) {
+  const available = state.seeds.filter(s => state.inventory[s.numtag] > 0);
+  
+  function* generate(combo, start, remaining) {
+    if (remaining === 0) {
+      yield combo.slice();
+      return;
+    }
+    for (let i = start; i < available.length; i++) {
+      const seed = available[i];
+      const count = combo.filter(s=>s.numtag===seed.numtag).length;
+      if (count < state.inventory[seed.numtag]) {
+        combo.push(seed);
+        yield* generate(combo, i, remaining - 1);
+        combo.pop();
+      }
+    }
+  }
+  
+  yield* generate([], 0, maxSeeds);
+}
+
+async function optimize() {
+  const maxSeeds = +document.getElementById('max-seeds').value;
+  const queryType = document.getElementById('query-type').value;
+  const target = queryType==='stat' ? document.getElementById('target-stat').value :
+                                      document.getElementById('target-harvest').value;
+  
+  document.getElementById('calc-btn').disabled = true;
+  document.getElementById('progress-container').style.display = 'block';
+  document.getElementById('results-section').style.display = 'none';
+  
+  const results = [];
+  let count = 0;
+  
+  for (const combo of generateCombinations(maxSeeds)) {
+    count++;
+    if (count % 1000 === 0) {
+      const texts = i18n[state.lang];
+      document.getElementById('progress-text').textContent = `${texts['txt-evaluating']} ${count} ${texts['txt-combinations']}`;
+      await new Promise(r => setTimeout(r, 0)); // Allow UI update
+    }
+    
+    const value = queryType==='stat' ? 
+      calculateStatProb(combo,target) : 
+      calculateHarvestExp(combo,target);
+    
+    results.push({combo, value});
+  }
+  
+  results.sort((a,b) => b.value - a.value);
+  displayResults(results.slice(0,10), queryType, target);
+  
+  document.getElementById('calc-btn').disabled = false;
+  document.getElementById('progress-container').style.display = 'none';
+}
+
+function displayResults(results, queryType, target) {
+  const container = document.getElementById('results-container');
+  if(!results.length) {
+    container.innerHTML = '<div class="no-results">No valid combinations found</div>';
+    document.getElementById('results-section').style.display = 'block';
+    return;
+  }
+  
+  const texts = i18n[state.lang];
+  container.innerHTML = results.map((r,idx) => {
+    const seeds = r.combo.map(s => s.fullname).join(', ');
+    const valueLabel = queryType==='stat' ? 
+      `${r.value.toFixed(2)}% ${texts['txt-probability']}` :
+      `${r.value.toFixed(2)} ${texts['txt-expecteditems']}`;
+    
+    return `<div class="result-card ${idx===0?'top':''}">
+      <div class="result-header">
+        <span class="result-rank">#${idx+1}</span>
+        <span class="result-value">${valueLabel}</span>
+      </div>
+      <div class="result-details">
+        <strong>${texts['lbl-seeds']}</strong> ${seeds}
+      </div>
+    </div>`;
+  }).join('');
+  
+  document.getElementById('results-section').style.display = 'block';
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  loadSeeds();
+  
+  // Add language switcher event listeners
+  document.querySelectorAll('.lang-emoji').forEach(el => {
+    el.addEventListener('click', () => {
+      switchLanguage(el.dataset.lang);
+    });
+  });
+});
+</script>
+</body>
+</html>
