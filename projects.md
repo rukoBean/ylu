@@ -3,4 +3,6 @@ layout: page
 title: My Projects
 ---
 
-<a href="attachments/fe3h-garden-calc.html" target="_blank">火焰纹章风花雪月温室栽培计算器</a> 
+[火焰纹章风花雪月温室栽培：计算器]({% link _projects/fe3hgardencalc.html %})
+
+[火焰纹章风花雪月温室栽培：反向查询]({% link _projects/fe3hgardenquery.html %})

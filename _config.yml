@@ -17,3 +17,7 @@ goat_counter: true
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
+collections:
+  projects:
+    output: true
+    permalink: /:name
