@@ -1,9 +1,9 @@
-title: ylu-weekly
-# email: rukobeanly@gmail.com
+title: rukobean
+email: lu_maco@outlook.com
 github_username: rukoBean
 url: https://www.rukobean.com/
 description: >
-  a (hopefully) weekly live show of my life
+  A simple gallery of myself
 favicon: "favicon.ico"
 kramdown:
   syntax_highlighter: rouge
