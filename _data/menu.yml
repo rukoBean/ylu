@@ -6,11 +6,17 @@ entries:
       show_more: true
       show_more_text: See archive...
       show_more_url: archive-DFT
-  - title: miscellaneous
+#  - title: miscellaneous
+#    entries:
+#      - title: demo
+#        url: test.html
+#      - title: projects
+#        url: projects.html
+#      - title: inspirations
+#        url: inspirations.html
+  - title: links
     entries:
-      - title: demo
-        url: test.html
-      - title: projects
-        url: projects.html
-      - title: inspirations
-        url: inspirations.html
+      - title: iqmlab
+        url: https://www.iqmlab.org
+      - title: blog
+        url: https://hobolu.com
